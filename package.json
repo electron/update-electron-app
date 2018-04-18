@@ -1,0 +1,26 @@
+{
+  "name": "electron-update-helper",
+  "description": "Drop in module that makes auto-updating Electron apps easy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "electron-is-dev": "^0.3.0",
+    "is-url": "^1.2.4",
+    "ms": "^2.1.1"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "standard": "^11.0.1",
+    "standard-markdown": "^4.0.2"
+  },
+  "scripts": {
+    "test": "jest && standard --fix && standard-markdown",
+    "watch": "jest --watch --notify --notifyMode=change --coverage"
+  },
+  "standard": {
+    "env": {
+      "jest": true
+    }
+  }
+}
