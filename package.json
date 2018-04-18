@@ -1,7 +1,8 @@
 {
   "name": "update-electron-app",
-  "description": "A drop-in module that adds autoUpdating capabilities to Electron apps",
   "version": "1.0.1",
+  "description": "A drop-in module that adds autoUpdating capabilities to Electron apps",
+  "repository": "https://github.com/electron/update-electron-app",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
