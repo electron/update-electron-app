@@ -11,7 +11,7 @@ module.exports = function updater (opts = {}) {
   // don't attempt to update during development
   if (isDev) {
     if (opts.debug) {
-      console.debug('update-electron-app config looks good; aborting updates since app is in development mode')
+      console.log('update-electron-app config looks good; aborting updates since app is in development mode')
     }
     return
   }
@@ -26,7 +26,7 @@ function initUpdater (opts) {
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
 
   function log () {
-    if (debug) console.debug.apply(console, arguments)
+    if (debug) console.log.apply(console, arguments)
   }
 
   log('feedURL', feedURL)
