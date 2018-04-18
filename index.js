@@ -70,7 +70,7 @@ function initUpdater (opts) {
 
 function validateInput (opts) {
   const defaults = {
-    host: 'https://electron-update-server.herokuapp.com',
+    host: 'https://update.electronjs.org',
     updateInterval: '60 seconds',
     debug: true
   }
