@@ -11,7 +11,7 @@ module.exports = function updater (opts = {}) {
   // don't attempt to update during development
   if (isDev) {
     if (opts.debug) {
-      console.debug('electron-update-helper config looks good; aborting updates since app is in development mode')
+      console.debug('update-electron-app config looks good; aborting updates since app is in development mode')
     }
     return
   }

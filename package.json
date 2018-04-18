@@ -1,6 +1,6 @@
 {
-  "name": "electron-update-helper",
-  "description": "Drop in module that makes auto-updating Electron apps easy",
+  "name": "update-electron-app",
+  "description": "A drop-in module that adds autoUpdating capabilities to Electron apps",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

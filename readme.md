@@ -1,11 +1,13 @@
-# electron-update-helper 
+# :construction: WIP NOTHING TO SEE HERE YET :construction:
 
-Drop in module that makes auto-updating Electron apps easy
+# update-electron-app 
+
+> A drop-in module that adds autoUpdating capabilities to Electron apps
 
 ## Installation
 
 ```sh
-npm i electron-update-helper
+npm i update-electron-app
 ```
 
 ## Usage
@@ -13,7 +15,7 @@ npm i electron-update-helper
 Drop this anywhere in your main process:
 
 ```js
-require('electron-update-helper')({
+require('update-electron-app')({
   repo: 'ummoji/ummoji-desktop'
 })
 ```
