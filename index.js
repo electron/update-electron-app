@@ -3,6 +3,8 @@ const isURL = require('is-url')
 const isDev = require('electron-is-dev')
 const ms = require('ms')
 const {app, autoUpdater, dialog} = require('electron')
+const gh = require('github-url-to-object')
+const path = require('path')
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
@@ -22,7 +24,17 @@ module.exports = function updater (opts = {}) {
 }
 
 function initUpdater (opts) {
-  const {host, repo, updateInterval, debug} = opts
+  const {host, updateInterval, debug} = opts
+
+  let repo = opts.repo
+  if (!repo) {
+    const pkg = require(path.join(app.getAppPath(), 'package.json'))
+    const repoString = (pkg.repository && pkg.repository.url) || pkg.repository
+    const repoObject = gh(repoString)
+    if (!repoObject) throw new Error('Unable to parse repository')
+    repo = `${repoObject.user}/${repoObject.repo}`
+  }
+
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
 
   function log () {

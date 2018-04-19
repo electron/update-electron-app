@@ -7,6 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "electron-is-dev": "^0.3.0",
+    "github-url-to-object": "^4.0.4",
     "is-url": "^1.2.4",
     "ms": "^2.1.1"
   },
