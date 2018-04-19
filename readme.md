@@ -1,8 +1,8 @@
-# :construction: WIP NOTHING TO SEE HERE YET :construction:
-
 # update-electron-app 
 
 > A drop-in module that adds autoUpdating capabilities to Electron apps
+
+![screenshot](screenshot.png)
 
 ## Installation
 
