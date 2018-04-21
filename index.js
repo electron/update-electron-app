@@ -84,7 +84,10 @@ function validateInput (opts) {
     const pkg = require(path.join(app.getAppPath(), 'package.json'))
     const repoString = (pkg.repository && pkg.repository.url) || pkg.repository
     const repoObject = gh(repoString)
-    if (!repoObject) throw new Error('Unable to parse repository')
+    assert(
+      repoObject,
+      'repo not found. Add repository string to your app\'s package.json file'
+    )
     repo = `${repoObject.user}/${repoObject.repo}`
   }
 
