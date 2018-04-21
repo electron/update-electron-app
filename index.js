@@ -24,16 +24,7 @@ module.exports = function updater (opts = {}) {
 }
 
 function initUpdater (opts) {
-  const {host, updateInterval, debug} = opts
-
-  let repo = opts.repo
-  if (!repo) {
-    const pkg = require(path.join(app.getAppPath(), 'package.json'))
-    const repoString = (pkg.repository && pkg.repository.url) || pkg.repository
-    const repoObject = gh(repoString)
-    if (!repoObject) throw new Error('Unable to parse repository')
-    repo = `${repoObject.user}/${repoObject.repo}`
-  }
+  const {host, repo, updateInterval, debug} = opts
 
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
 
@@ -86,7 +77,16 @@ function validateInput (opts) {
     updateInterval: '60 seconds',
     debug: true
   }
-  const {host, repo, updateInterval, debug} = Object.assign({}, defaults, opts)
+  const {host, updateInterval, debug} = Object.assign({}, defaults, opts)
+
+  let repo = opts.repo
+  if (!repo) {
+    const pkg = require(path.join(app.getAppPath(), 'package.json'))
+    const repoString = (pkg.repository && pkg.repository.url) || pkg.repository
+    const repoObject = gh(repoString)
+    if (!repoObject) throw new Error('Unable to parse repository')
+    repo = `${repoObject.user}/${repoObject.repo}`
+  }
 
   assert(
     repo && repo.length && repo.includes('/'),
