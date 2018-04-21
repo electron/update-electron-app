@@ -2,7 +2,6 @@ const assert = require('assert')
 const isURL = require('is-url')
 const isDev = require('electron-is-dev')
 const ms = require('ms')
-const {app, autoUpdater, dialog} = require('electron')
 const gh = require('github-url-to-object')
 const path = require('path')
 
@@ -18,14 +17,14 @@ module.exports = function updater (opts = {}) {
     return
   }
 
-  app.isReady()
+  opts.electron.app.isReady()
     ? initUpdater(opts)
-    : app.on('ready', () => initUpdater(opts))
+    : opts.electron.app.on('ready', () => initUpdater(opts))
 }
 
 function initUpdater (opts) {
-  const {host, repo, updateInterval, debug} = opts
-
+  const {host, repo, updateInterval, debug, electron} = opts
+  const {app, autoUpdater, dialog} = electron
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
 
   function log () {
@@ -73,7 +72,7 @@ function initUpdater (opts) {
 
 function validateInput (opts) {
   const defaults = {
-    host: 'https://electron-update-server.herokuapp.com',
+    host: 'https://update.electronjs.org',
     updateInterval: '60 seconds',
     debug: true
   }
@@ -90,6 +89,9 @@ function validateInput (opts) {
     )
     repo = `${repoObject.user}/${repoObject.repo}`
   }
+
+  // allows electron to be mocked in tests
+  const electron = opts.electron || require('electron')
 
   assert(
     repo && repo.length && repo.includes('/'),
@@ -116,5 +118,5 @@ function validateInput (opts) {
     'debug must be a boolean'
   )
 
-  return {host, repo, updateInterval, debug}
+  return {host, repo, updateInterval, debug, electron}
 }
