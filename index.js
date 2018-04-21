@@ -4,6 +4,7 @@ const isDev = require('electron-is-dev')
 const ms = require('ms')
 const gh = require('github-url-to-object')
 const path = require('path')
+const fs = require('fs')
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
@@ -78,9 +79,13 @@ function validateInput (opts) {
   }
   const {host, updateInterval, debug} = Object.assign({}, defaults, opts)
 
+  // allows electron to be mocked in tests
+  const electron = opts.electron || require('electron')
+
   let repo = opts.repo
   if (!repo) {
-    const pkg = require(path.join(app.getAppPath(), 'package.json'))
+    const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'))
+    const pkg = JSON.parse(pkgBuf.toString())
     const repoString = (pkg.repository && pkg.repository.url) || pkg.repository
     const repoObject = gh(repoString)
     assert(
@@ -89,9 +94,6 @@ function validateInput (opts) {
     )
     repo = `${repoObject.user}/${repoObject.repo}`
   }
-
-  // allows electron to be mocked in tests
-  const electron = opts.electron || require('electron')
 
   assert(
     repo && repo.length && repo.includes('/'),
