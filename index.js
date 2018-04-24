@@ -35,8 +35,6 @@ function initUpdater (opts) {
   log('feedURL', feedURL)
   autoUpdater.setFeedURL(feedURL)
 
-  setInterval(() => { autoUpdater.checkForUpdates() }, updateInterval)
-
   autoUpdater.on('error', err => {
     log('updater error')
     log(err)
@@ -69,12 +67,16 @@ function initUpdater (opts) {
       if (response === 0) autoUpdater.quitAndInstall()
     })
   })
+
+  // check for updates right away and keep checking later
+  autoUpdater.checkForUpdates()
+  setInterval(() => { autoUpdater.checkForUpdates() }, updateInterval)
 }
 
 function validateInput (opts) {
   const defaults = {
     host: 'https://update.electronjs.org',
-    updateInterval: '60 seconds',
+    updateInterval: '10 minutes',
     debug: true
   }
   const {host, updateInterval, debug} = Object.assign({}, defaults, opts)
@@ -107,12 +109,12 @@ function validateInput (opts) {
 
   assert(
     typeof updateInterval === 'string' && updateInterval.match(/^\d+/),
-    'updateInterval must be a human-friendly string interval like `90 seconds`'
+    'updateInterval must be a human-friendly string interval like `20 minutes`'
   )
 
   assert(
-    ms(updateInterval) >= 30 * 1000,
-    'updateInterval must be `30 seconds` or more'
+    ms(updateInterval) >= 5 * 60 * 1000,
+    'updateInterval must be `5 minutes` or more'
   )
 
   assert(
