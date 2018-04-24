@@ -1,18 +1,23 @@
 const updater = require('.')
 const repo = 'some-owner/some-repo'
+const os = require('os')
+const tmpdir = os.tmpdir()
+const fs = require('fs')
+const path = require('path')
 const electron = {
   app: {
     getVersion: () => { return '1.2.3' },
     isReady: () => { return true },
-    on: (eventName) => { /* no-op */ }
+    on: (eventName) => { /* no-op */ },
+    getAppPath: () => { return tmpdir }
   },
   autoUpdater: {
-    checkForUpdates: () =>  { /* no-op */ },
+    checkForUpdates: () => { /* no-op */ },
     on: (eventName) => { /* no-op */ },
-    setFeedURL: () =>  { /* no-op */ }
+    setFeedURL: () => { /* no-op */ }
   },
   dialog: {
-    showMessageBox: () =>  { /* no-op */ }
+    showMessageBox: () => { /* no-op */ }
   }
 }
 
@@ -21,10 +26,27 @@ test('exports a function', () => {
 })
 
 describe('repository', () => {
+  fs.writeFileSync(
+    path.join(tmpdir, 'package.json'),
+    JSON.stringify({})
+  )
+
   test('is required', () => {
     expect(() => {
       updater({electron})
-    }).toThrowError('repo is required and should be in the format `owner/repo`')
+    }).toThrowError('repo not found. Add repository string to your app\'s package.json file')
+  })
+
+  test('from opts', () => {
+    updater({electron, repo: 'foo/bar'})
+  })
+
+  test('from package.json', () => {
+    fs.writeFileSync(
+      path.join(tmpdir, 'package.json'),
+      JSON.stringify({repository: 'foo/bar'})
+    )
+    updater({electron})
   })
 })
 
@@ -50,12 +72,10 @@ describe('updateInterval', () => {
       updater({repo, electron, updateInterval: '20 seconds'})
     }).toThrowError('updateInterval must be `30 seconds` or more')
   })
-  
+
   test('must be a string', () => {
     expect(() => {
       updater({repo, electron, updateInterval: 3000})
     }).toThrowError('updateInterval must be a human-friendly string interval like `90 seconds`')
   })
 })
-
-
