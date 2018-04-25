@@ -5,6 +5,17 @@ const ms = require('ms')
 const gh = require('github-url-to-object')
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
+const {format} = require('util')
+const pkg = require('./package.json')
+const userAgent = format(
+  '%s/%s (%s: %s %s)',
+  pkg.name,
+  pkg.version,
+  os.platform(),
+  os.type(),
+  os.arch()
+)
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
@@ -27,13 +38,15 @@ function initUpdater (opts) {
   const {host, repo, updateInterval, debug, electron} = opts
   const {app, autoUpdater, dialog} = electron
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
+  const requestHeaders = {'User-Agent': userAgent}
 
   function log () {
     if (debug) console.log.apply(console, arguments)
   }
 
   log('feedURL', feedURL)
-  autoUpdater.setFeedURL(feedURL)
+  log('requestHeaders', requestHeaders)
+  autoUpdater.setFeedURL(feedURL, requestHeaders)
 
   setInterval(() => { autoUpdater.checkForUpdates() }, updateInterval)
 
