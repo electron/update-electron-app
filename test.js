@@ -67,15 +67,15 @@ describe('logger', () => {
 })
 
 describe('updateInterval', () => {
-  test('must be 30 seconds or more', () => {
+  test('must be 5 minutes or more', () => {
     expect(() => {
       updater({repo, electron, updateInterval: '20 seconds'})
-    }).toThrowError('updateInterval must be `30 seconds` or more')
+    }).toThrowError('updateInterval must be `5 minutes` or more')
   })
 
   test('must be a string', () => {
     expect(() => {
       updater({repo, electron, updateInterval: 3000})
-    }).toThrowError('updateInterval must be a human-friendly string interval like `90 seconds`')
+    }).toThrowError('updateInterval must be a human-friendly string interval like `20 minutes`')
   })
 })
