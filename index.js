@@ -9,11 +9,10 @@ const os = require('os')
 const {format} = require('util')
 const pkg = require('./package.json')
 const userAgent = format(
-  '%s/%s (%s: %s %s)',
+  '%s/%s (%s: %s)',
   pkg.name,
   pkg.version,
   os.platform(),
-  os.type(),
   os.arch()
 )
 
