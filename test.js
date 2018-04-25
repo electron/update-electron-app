@@ -58,11 +58,11 @@ describe('host', () => {
   })
 })
 
-describe('debug', () => {
-  test('must be a boolean', () => {
+describe('logger', () => {
+  test('must be an object defining a `log` function', () => {
     expect(() => {
-      updater({repo, electron, debug: 'yep'})
-    }).toThrowError('debug must be a boolean')
+      updater({repo, electron, logger: 'yep'})
+    }).toThrowError('logger.log is not a function')
   })
 })
 
