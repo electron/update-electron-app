@@ -12,9 +12,8 @@ module.exports = function updater (opts = {}) {
 
   // don't attempt to update during development
   if (isDev) {
-    if (opts.debug) {
-      console.log('update-electron-app config looks good; aborting updates since app is in development mode')
-    }
+    const message = 'update-electron-app config looks good; aborting updates since app is in development mode'
+    opts.logger ? opts.logger.log(message) : console.log(message)
     return
   }
 
@@ -24,12 +23,12 @@ module.exports = function updater (opts = {}) {
 }
 
 function initUpdater (opts) {
-  const {host, repo, updateInterval, debug, electron} = opts
+  const {host, repo, updateInterval, logger, electron} = opts
   const {app, autoUpdater, dialog} = electron
   const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
 
-  function log () {
-    if (debug) console.log.apply(console, arguments)
+  function log (...args) {
+    logger.log(...args)
   }
 
   log('feedURL', feedURL)
@@ -77,9 +76,9 @@ function validateInput (opts) {
   const defaults = {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
-    debug: true
+    logger: console
   }
-  const {host, updateInterval, debug} = Object.assign({}, defaults, opts)
+  const {host, updateInterval, logger} = Object.assign({}, defaults, opts)
 
   // allows electron to be mocked in tests
   const electron = opts.electron || require('electron')
@@ -118,9 +117,9 @@ function validateInput (opts) {
   )
 
   assert(
-    typeof debug === 'boolean',
-    'debug must be a boolean'
+    logger && typeof logger.log,
+    'function'
   )
 
-  return {host, repo, updateInterval, debug, electron}
+  return {host, repo, updateInterval, logger, electron}
 }
