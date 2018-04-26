@@ -56,4 +56,4 @@ MIT
 
 If your app is packaged with `electron-builder`, you may not need this module. 
 Builder has its own built-in mechanism for updating apps. Find out more at 
-[electron.build/auto-update](https://www.electron.build/auto-update.).
+[electron.build/auto-update](https://www.electron.build/auto-update).
