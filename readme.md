@@ -37,6 +37,16 @@ That's it! Here's what happens by default:
 - If an update is found, it will automatically be downloaded in the background.
 - When an update is finished downloading, a dialog is displayed allowing the user to restart the app now or later.
 
+You can also specify custom options:
+
+```js
+require('update-electron-app')({
+  repo: 'github-user/repo',
+  updateInterval: '1 hour',
+  logger: require('electron-log')
+})
+```
+
 ## API
 
 ### `update(options)`
