@@ -81,7 +81,7 @@ function initUpdater (opts) {
 
   // check for updates right away and keep checking later
   autoUpdater.checkForUpdates()
-  setInterval(() => { autoUpdater.checkForUpdates() }, updateInterval)
+  setInterval(() => { autoUpdater.checkForUpdates() }, ms(updateInterval))
 }
 
 function validateInput (opts) {
