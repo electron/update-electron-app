@@ -19,8 +19,12 @@ declare function updater(
         /**
          * @param {Object} logger A custom logger object that defines a `log` function. Defaults to `console`. See electron-log, a module that aggregates logs from main and renderer processes into a single file.
          */
-        logger?: Object;
+        logger?: ILogger;
     }
 ): void
+
+interface ILogger {
+    log(message: string): void;
+}
 
 export = updater;
