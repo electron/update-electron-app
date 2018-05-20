@@ -4,6 +4,7 @@
   "description": "A drop-in module that adds autoUpdating capabilities to Electron apps",
   "repository": "https://github.com/electron/update-electron-app",
   "main": "index.js",
+  "types": "index.d.ts",
   "license": "MIT",
   "dependencies": {
     "electron-is-dev": "^0.3.0",
