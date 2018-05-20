@@ -9,6 +9,6 @@ declare function updater(
         updateInterval?: string,
         logger?: Object
     }
-): any
+): void
 
 export = updater;
