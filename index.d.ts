@@ -2,10 +2,11 @@
 // Project: https://github.com/electron/update-electron-app
 // Definitions by: HashimotoYT <hashimoto.stream@gmail.com>
 
-declare function updater(
+export function updater(
     opts?: {
         /**
-         * @param {String} repo A GitHub repository in the format `owner/repo`. Defaults to your `package.json`'s `"repository"` field
+         * @param {String} repo A GitHub repository in the format `owner/repo`.
+         *                      Defaults to your `package.json`'s `"repository"` field
          */
         repo?: string;
         /**
@@ -13,15 +14,18 @@ declare function updater(
          */
         host?: string;
         /**
-         * @param {String} updateInterval How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`.
+         * @param {String} updateInterval How frequently to check for updates. Defaults to `10 minutes`.
+         *                                Minimum allowed interval is `5 minutes`.
          */
         updateInterval?: string;
         /**
-         * @param {Object} logger A custom logger object that defines a `log` function. Defaults to `console`. See electron-log, a module that aggregates logs from main and renderer processes into a single file.
+         * @param {Object} logger A custom logger object that defines a `log` function.
+         *                        Defaults to `console`. See electron-log, a module
+         *                        that aggregates logs from main and renderer processes into a single file.
          */
         logger?: ILogger;
-    }
-): void
+    },
+): void;
 
 interface ILogger {
     log(message: string): void;
@@ -29,5 +33,3 @@ interface ILogger {
     error(message: string): void;
     warn(message: string): void;
 }
-
-export = updater;
