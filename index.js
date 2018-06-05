@@ -15,6 +15,7 @@ const userAgent = format(
   os.platform(),
   os.arch()
 )
+const supportedPlatforms = ['darwin', 'win32']
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
@@ -40,6 +41,12 @@ function initUpdater (opts) {
 
   function log (...args) {
     logger.log(...args)
+  }
+
+  // exit early on unsupported platforms, e.g. `linux`
+  if (typeof process && process.platform && !supportedPlatforms.includes(process.platform)) {
+    log(`Electron's autoUpdater does not support the '${process.platform}' platform`)
+    return
   }
 
   log('feedURL', feedURL)
