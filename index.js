@@ -44,7 +44,7 @@ function initUpdater (opts) {
   }
 
   // exit early on unsupported platforms, e.g. `linux`
-  if (typeof process && process.platform && !supportedPlatforms.includes(process.platform)) {
+  if (typeof process !== 'undefined' && process.platform && !supportedPlatforms.includes(process.platform)) {
     log(`Electron's autoUpdater does not support the '${process.platform}' platform`)
     return
   }
