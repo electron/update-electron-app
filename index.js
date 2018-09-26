@@ -36,7 +36,7 @@ module.exports = function updater (opts = {}) {
 function initUpdater (opts) {
   const {host, repo, updateInterval, logger, electron} = opts
   const {app, autoUpdater, dialog} = electron
-  const feedURL = `${host}/${repo}/${process.platform}/${app.getVersion()}`
+  const feedURL = `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
   const requestHeaders = {'User-Agent': userAgent}
 
   function log (...args) {
