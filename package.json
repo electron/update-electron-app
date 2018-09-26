@@ -16,7 +16,7 @@
     "jest": "^22.4.3",
     "semantic-release": "^15.1.7",
     "standard": "^11.0.1",
-    "standard-markdown": "^4.0.2",
+    "standard-markdown": "^5.0.1",
     "travis-deploy-once": "^4.4.1",
     "tslint": "^5.10.0",
     "typescript": "^2.8.3"
@@ -32,5 +32,8 @@
     "env": {
       "jest": true
     }
+  },
+  "jest": {
+    "testURL": "http://localhost"
   }
 }
