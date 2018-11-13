@@ -2,7 +2,7 @@
 // Project: https://github.com/electron/update-electron-app
 // Definitions by: HashimotoYT <hashimoto.stream@gmail.com>
 
-export function updater(
+export default function updater(
     opts?: {
         /**
          * @param {String} repo A GitHub repository in the format `owner/repo`.
