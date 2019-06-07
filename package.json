@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "jest": "^22.4.3",
-    "semantic-release": "^15.1.7",
+    "semantic-release": "^15.13.12",
     "standard": "^11.0.1",
     "standard-markdown": "^5.0.1",
     "travis-deploy-once": "^4.4.1",
