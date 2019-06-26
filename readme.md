@@ -1,4 +1,4 @@
-# update-electron-app 
+# update-electron-app
 
 > A drop-in module that adds autoUpdating capabilities to Electron apps
 
@@ -57,20 +57,22 @@ Options:
 - `host` String (optional) - Defaults to `https://update.electronjs.org`
 - `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`.
 - `logger` Object (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file.
+- `nagUser` Boolean (optional) - Defaults to true.  When enabled the user will be
+  prompted to apply the update immediately after download.
 
 ## FAQ
 
 #### What kinds of assets do I need to build?
 
-For macOS, you'll need to build a `.zip` file and include it in your GitHub Release. 
+For macOS, you'll need to build a `.zip` file and include it in your GitHub Release.
 Use [electron-forge] or [electron-installer-zip] to package your app as a zip.
 
-For Windows, you'll need to build a `.exe` file and include it in your GitHub Release. 
+For Windows, you'll need to build a `.exe` file and include it in your GitHub Release.
 
 #### Why is my app launching multiple times?
 
 Windows apps have an update process that requires multiple application restarts.
-You can use the [electron-squirrel-startup](https://github.com/mongodb-js/electron-squirrel-startup) module to improve this 
+You can use the [electron-squirrel-startup](https://github.com/mongodb-js/electron-squirrel-startup) module to improve this
 behavior.
 
 #### Can I use this module by uploading my private app's builds to a public GitHub repository?
@@ -83,8 +85,8 @@ MIT
 
 ## See Also
 
-If your app is packaged with `electron-builder`, you may not need this module. 
-Builder has its own built-in mechanism for updating apps. Find out more at 
+If your app is packaged with `electron-builder`, you may not need this module.
+Builder has its own built-in mechanism for updating apps. Find out more at
 [electron.build/auto-update](https://www.electron.build/auto-update).
 
 [electron-forge]: https://github.com/electron-userland/electron-forge
