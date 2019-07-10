@@ -57,7 +57,7 @@ Options:
 - `host` String (optional) - Defaults to `https://update.electronjs.org`
 - `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`.
 - `logger` Object (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file.
-- `notifyUser` Boolean (optional) - Defaults to true.  When enabled the user will be
+- `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
   prompted to apply the update immediately after download.
 
 ## FAQ
