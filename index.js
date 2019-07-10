@@ -70,21 +70,23 @@ function initUpdater (opts) {
     log('update-not-available')
   })
 
-  autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-    log('update-downloaded', arguments)
+  if (opts.notifyUser) {
+    autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
+      log('update-downloaded', arguments)
 
-    const dialogOpts = {
-      type: 'info',
-      buttons: ['Restart', 'Later'],
-      title: 'Application Update',
-      message: process.platform === 'win32' ? releaseNotes : releaseName,
-      detail: 'A new version has been downloaded. Restart the application to apply the updates.'
-    }
+      const dialogOpts = {
+        type: 'info',
+        buttons: ['Restart', 'Later'],
+        title: 'Application Update',
+        message: process.platform === 'win32' ? releaseNotes : releaseName,
+        detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+      }
 
-    dialog.showMessageBox(dialogOpts, (response) => {
-      if (response === 0) autoUpdater.quitAndInstall()
+      dialog.showMessageBox(dialogOpts, (response) => {
+        if (response === 0) autoUpdater.quitAndInstall()
+      })
     })
-  })
+  }
 
   // check for updates right away and keep checking later
   autoUpdater.checkForUpdates()
@@ -95,9 +97,10 @@ function validateInput (opts) {
   const defaults = {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
-    logger: console
+    logger: console,
+    notifyUser: true
   }
-  const {host, updateInterval, logger} = Object.assign({}, defaults, opts)
+  const {host, updateInterval, logger, notifyUser} = Object.assign({}, defaults, opts)
 
   // allows electron to be mocked in tests
   const electron = opts.electron || require('electron')
@@ -140,5 +143,5 @@ function validateInput (opts) {
     'function'
   )
 
-  return {host, repo, updateInterval, logger, electron}
+  return {host, repo, updateInterval, logger, electron, notifyUser}
 }
