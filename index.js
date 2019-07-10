@@ -70,7 +70,7 @@ function initUpdater (opts) {
     log('update-not-available')
   })
 
-  if (opts.nagUser) {
+  if (opts.notifyUser) {
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
       log('update-downloaded', arguments)
 
@@ -98,9 +98,9 @@ function validateInput (opts) {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
     logger: console,
-    nagUser: true
+    notifyUser: true
   }
-  const {host, updateInterval, logger, nagUser} = Object.assign({}, defaults, opts)
+  const {host, updateInterval, logger, notifyUser} = Object.assign({}, defaults, opts)
 
   // allows electron to be mocked in tests
   const electron = opts.electron || require('electron')
@@ -143,5 +143,5 @@ function validateInput (opts) {
     'function'
   )
 
-  return {host, repo, updateInterval, logger, electron, nagUser}
+  return {host, repo, updateInterval, logger, electron, notifyUser}
 }
