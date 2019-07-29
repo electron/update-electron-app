@@ -2,7 +2,7 @@
 // Project: https://github.com/electron/update-electron-app
 // Definitions by: HashimotoYT <hashimoto.stream@gmail.com>
 
-export function updater(
+declare function updater(
     opts?: {
         /**
          * @param {String} repo A GitHub repository in the format `owner/repo`.
@@ -33,3 +33,5 @@ interface ILogger {
     error(message: string): void;
     warn(message: string): void;
 }
+
+export = updater;
