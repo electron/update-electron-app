@@ -33,27 +33,27 @@ describe('repository', () => {
 
   test('is required', () => {
     expect(() => {
-      updater({electron})
+      updater({ electron })
     }).toThrowError('repo not found. Add repository string to your app\'s package.json file')
   })
 
   test('from opts', () => {
-    updater({electron, repo: 'foo/bar'})
+    updater({ electron, repo: 'foo/bar' })
   })
 
   test('from package.json', () => {
     fs.writeFileSync(
       path.join(tmpdir, 'package.json'),
-      JSON.stringify({repository: 'foo/bar'})
+      JSON.stringify({ repository: 'foo/bar' })
     )
-    updater({electron})
+    updater({ electron })
   })
 })
 
 describe('host', () => {
   test('must a valid HTTPS URL', () => {
     expect(() => {
-      updater({repo, electron, host: 'http://example.com'})
+      updater({ repo, electron, host: 'http://example.com' })
     }).toThrowError('host must be a valid HTTPS URL')
   })
 })
@@ -61,7 +61,7 @@ describe('host', () => {
 describe('logger', () => {
   test('must be an object defining a `log` function', () => {
     expect(() => {
-      updater({repo, electron, logger: 'yep'})
+      updater({ repo, electron, logger: 'yep' })
     }).toThrowError('logger.log is not a function')
   })
 })
@@ -69,13 +69,13 @@ describe('logger', () => {
 describe('updateInterval', () => {
   test('must be 5 minutes or more', () => {
     expect(() => {
-      updater({repo, electron, updateInterval: '20 seconds'})
+      updater({ repo, electron, updateInterval: '20 seconds' })
     }).toThrowError('updateInterval must be `5 minutes` or more')
   })
 
   test('must be a string', () => {
     expect(() => {
-      updater({repo, electron, updateInterval: 3000})
+      updater({ repo, electron, updateInterval: 3000 })
     }).toThrowError('updateInterval must be a human-friendly string interval like `20 minutes`')
   })
 })

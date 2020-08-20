@@ -16,8 +16,8 @@
     "@continuous-auth/semantic-release-npm": "^2.0.0",
     "jest": "^22.4.3",
     "semantic-release": "^15.13.12",
-    "standard": "^11.0.1",
-    "standard-markdown": "^5.0.1",
+    "standard": "^14.3.4",
+    "standard-markdown": "^6.0.0",
     "travis-deploy-once": "^4.4.1",
     "tslint": "^5.10.0",
     "typescript": "^2.8.3"
