@@ -82,7 +82,7 @@ function initUpdater (opts) {
         detail: 'A new version has been downloaded. Restart the application to apply the updates.'
       }
 
-      dialog.showMessageBox(dialogOpts, (response) => {
+      dialog.showMessageBox(dialogOpts).then(({ response }) => {
         if (response === 0) autoUpdater.quitAndInstall()
       })
     })

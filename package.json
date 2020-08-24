@@ -12,6 +12,9 @@
     "is-url": "^1.2.4",
     "ms": "^2.1.1"
   },
+  "peerDependencies": {
+    "electron": ">= 6.0.0"
+  },
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^2.0.0",
     "jest": "^22.4.3",
