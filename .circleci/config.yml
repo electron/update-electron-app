@@ -38,3 +38,4 @@ workflows:
             branches:
               only:
                 - master
+          context: cfa
