@@ -40,6 +40,8 @@ function initUpdater (opts) {
   const requestHeaders = { 'User-Agent': userAgent }
 
   function log (...args) {
+    if(logger === console && !isDev) return
+
     logger.log(...args)
   }
 
