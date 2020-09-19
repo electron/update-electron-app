@@ -72,7 +72,7 @@ function initUpdater (opts) {
 
   if (opts.notifyUser) {
     autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-      log('update-downloaded', arguments)
+      log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL])
 
       const dialogOpts = {
         type: 'info',
