@@ -4,7 +4,10 @@ const os = require('os')
 const tmpdir = os.tmpdir()
 const fs = require('fs')
 const path = require('path')
+const rewire = require('rewire')
+
 const electron = {
+  isDev: true,
   app: {
     getVersion: () => { return '1.2.3' },
     isReady: () => { return true },
@@ -47,6 +50,14 @@ describe('repository', () => {
       JSON.stringify({ repository: 'foo/bar' })
     )
     updater({ electron })
+  })
+})
+
+describe('logger', () => {
+  const validateInput = rewire('./index.js').__get__('validateInput')
+
+  test('must have log method when no logger provided', () => {
+    expect(validateInput({ electron }).logger).toHaveProperty('log')
   })
 })
 
