@@ -4,6 +4,8 @@ const os = require('os')
 const tmpdir = os.tmpdir()
 const fs = require('fs')
 const path = require('path')
+const rewire = require('rewire')
+
 const electron = {
   app: {
     getVersion: () => { return '1.2.3' },
@@ -59,6 +61,24 @@ describe('host', () => {
 })
 
 describe('logger', () => {
+  const validateInput = rewire('./index.js').__get__('validateInput')
+
+  test('must have log method when no logger provided', () => {
+    expect(validateInput({ electron }).logger).toHaveProperty('log')
+  })
+
+  test('must be falsy if null is provided', () => {
+    expect(validateInput({ electron, logger: null }).logger).toBeFalsy()
+  })
+
+  test('must be falsy if false is provided', () => {
+    expect(validateInput({ electron, logger: false }).logger).toBeFalsy()
+  })
+
+  test('must be falsy if undefined is provided', () => {
+    expect(validateInput({ electron, logger: undefined }).logger).toBeFalsy()
+  })
+
   test('must be an object defining a `log` function', () => {
     expect(() => {
       updater({ repo, electron, logger: 'yep' })

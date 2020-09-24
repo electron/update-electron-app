@@ -24,7 +24,7 @@ module.exports = function updater (opts = {}) {
   // don't attempt to update during development
   if (isDev) {
     const message = 'update-electron-app config looks good; aborting updates since app is in development mode'
-    opts.logger ? opts.logger.log(message) : console.log(message)
+    opts.logger.log(message)
     return
   }
 
@@ -40,6 +40,8 @@ function initUpdater (opts) {
   const requestHeaders = { 'User-Agent': userAgent }
 
   function log (...args) {
+    if (!logger) return
+
     logger.log(...args)
   }
 
@@ -139,7 +141,7 @@ function validateInput (opts) {
   )
 
   assert(
-    logger && typeof logger.log,
+    !logger || (logger && typeof logger.log),
     'function'
   )
 
