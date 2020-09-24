@@ -40,7 +40,7 @@ function initUpdater (opts) {
   const requestHeaders = { 'User-Agent': userAgent }
 
   function log (...args) {
-    if (logger === console && !isDev) return
+    if (!logger) return
 
     logger.log(...args)
   }
@@ -141,7 +141,7 @@ function validateInput (opts) {
   )
 
   assert(
-    logger && typeof logger.log,
+    !logger || (logger && typeof logger.log),
     'function'
   )
 
