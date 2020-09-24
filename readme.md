@@ -26,7 +26,7 @@ npm i update-electron-app
 Drop this anywhere in your main process:
 
 ```js
-require('update-electron-app')()
+require("update-electron-app")();
 ```
 
 That's it! Here's what happens by default:
@@ -40,11 +40,11 @@ That's it! Here's what happens by default:
 You can also specify custom options:
 
 ```js
-require('update-electron-app')({
-  repo: 'github-user/repo',
-  updateInterval: '1 hour',
-  logger: require('electron-log')
-})
+require("update-electron-app")({
+  repo: "github-user/repo",
+  updateInterval: "1 hour",
+  logger: require("electron-log"),
+});
 ```
 
 ## API
@@ -56,8 +56,8 @@ Options:
 - `repo` String (optional) - A GitHub repository in the format `owner/repo`. Defaults to your `package.json`'s `"repository"` field
 - `host` String (optional) - Defaults to `https://update.electronjs.org`
 - `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`.
-- `logger` Object (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file.
-- `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
+- `logger` Object | null | false (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file. To disable logging provide a null or any falsy value.
+- `notifyUser` Boolean (optional) - Defaults to `true`. When enabled the user will be
   prompted to apply the update immediately after download.
 
 ## FAQ
