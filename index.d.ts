@@ -23,7 +23,7 @@ export function updater(
          *                        Defaults to `console`. See electron-log, a module
          *                        that aggregates logs from main and renderer processes into a single file.
          */
-        logger?: ILogger | null | undefined | false;
+        logger?: ILogger | null | false;
     },
 ): void;
 
