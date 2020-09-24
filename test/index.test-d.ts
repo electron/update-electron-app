@@ -20,3 +20,9 @@ updater<ICustomLogger>({
   repo: "HashimotoYT/hab",
   updateInterval: "10 minutes",
 });
+
+updater()
+
+updater({
+  logger: console,
+})
