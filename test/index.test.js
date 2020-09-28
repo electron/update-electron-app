@@ -1,4 +1,4 @@
-const updater = require('.')
+const updater = require('..')
 const repo = 'some-owner/some-repo'
 const os = require('os')
 const tmpdir = os.tmpdir()
