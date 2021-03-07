@@ -35,7 +35,7 @@ module.exports = function updater (opts = {}) {
 
 function initUpdater (opts) {
   const { host, repo, updateInterval, logger, electron } = opts
-  const { app, autoUpdater, dialog } = electron
+  const { app, autoUpdater, dialog, Notification } = electron
   const feedURL = `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
   const requestHeaders = { 'User-Agent': userAgent }
 
@@ -64,6 +64,12 @@ function initUpdater (opts) {
 
   autoUpdater.on('update-available', () => {
     log('update-available; downloading...')
+     // Creates Notification For User When a Download is Available
+     const notification = {
+      body: 'Update Available Downloading..',
+      timeoutType: "10"
+    }
+    new Notification(notification).show()
   })
 
   autoUpdater.on('update-not-available', () => {
