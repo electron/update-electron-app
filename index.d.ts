@@ -32,6 +32,19 @@ declare namespace updateElectronApp {
      *                             prompted to apply the update immediately after download.
      */
     readonly notifyUser?: boolean;
+     /**
+     * @param {String} userNotificationMessage  Message displayed to user when update starts downloading. Defaults to "Updating.."
+     */
+      readonly userNotificationMessage?: string;
+      /**
+       * @param {String} userNotificationTime Sets Time For How Long User Notification is shown. Defaults to !0 Seconds.
+       */
+       readonly userNotificationTime?: string;
+       /**
+        * @param {Boolean} userNotification Defaults to False. when enabled a User will be notified when a update download starts.
+        */
+        readonly userNotification?: boolean;
+   
   }
 }
 
