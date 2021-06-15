@@ -15,12 +15,12 @@ const userAgent = format(
   os.platform(),
   os.arch()
 )
+
 const supportedPlatforms = ['darwin', 'win32']
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
   opts = validateInput(opts)
-
   // don't attempt to update during development
   if (isDev) {
     const message = 'update-electron-app config looks good; aborting updates since app is in development mode'
@@ -34,8 +34,8 @@ module.exports = function updater (opts = {}) {
 }
 
 function initUpdater (opts) {
-  const { host, repo, updateInterval, logger, electron } = opts
-  const { app, autoUpdater, dialog } = electron
+  const { host, repo, updateInterval, logger, electron, userNotificationMessage, userNotificationTime } = opts
+  const { app, autoUpdater, dialog, Notification } = electron
   const feedURL = `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
   const requestHeaders = { 'User-Agent': userAgent }
 
@@ -64,6 +64,14 @@ function initUpdater (opts) {
 
   autoUpdater.on('update-available', () => {
     log('update-available; downloading...')
+     // Creates Notification For User When a Download is Available
+     if(opts.userNotification){
+      const notification = {
+        body: userNotificationMessage,
+        timeoutType: userNotificationTime
+      }
+       new Notification(notification).show()
+     }
   })
 
   autoUpdater.on('update-not-available', () => {
@@ -98,10 +106,13 @@ function validateInput (opts) {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
     logger: console,
-    notifyUser: true
+    notifyUser: true,
+    userNotification:false,
+    userNotificationMessage:"Updating..",
+    userNotificationTime:"10"
   }
-  const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts)
-
+  const { host, updateInterval, logger, notifyUser,userNotification, userNotificationMessage, userNotificationTime,  } = Object.assign({}, defaults, opts)
+ 
   // allows electron to be mocked in tests
   const electron = opts.electron || require('electron')
 
@@ -143,5 +154,5 @@ function validateInput (opts) {
     'function'
   )
 
-  return { host, repo, updateInterval, logger, electron, notifyUser }
+  return { host, repo, updateInterval, logger, electron, notifyUser, userNotification, userNotificationMessage, userNotificationTime }
 }
