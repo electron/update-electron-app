@@ -16,13 +16,11 @@ const userAgent = format(
   os.arch()
 )
 
-
 const supportedPlatforms = ['darwin', 'win32']
 
 module.exports = function updater (opts = {}) {
   // check for bad input early, so it will be logged during development
   opts = validateInput(opts)
-
   // don't attempt to update during development
   if (isDev) {
     const message = 'update-electron-app config looks good; aborting updates since app is in development mode'
@@ -35,10 +33,8 @@ module.exports = function updater (opts = {}) {
     : opts.electron.app.on('ready', () => initUpdater(opts))
 }
 
-
-
 function initUpdater (opts) {
-  const { host, repo, updateInterval, logger, electron, userNotificationMessage, userNotificationTime} = opts
+  const { host, repo, updateInterval, logger, electron, userNotificationMessage, userNotificationTime } = opts
   const { app, autoUpdater, dialog, Notification } = electron
   const feedURL = `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
   const requestHeaders = { 'User-Agent': userAgent }
@@ -76,7 +72,6 @@ function initUpdater (opts) {
       }
        new Notification(notification).show()
      }
-    
   })
 
   autoUpdater.on('update-not-available', () => {
@@ -117,12 +112,9 @@ function validateInput (opts) {
     userNotificationTime:"10"
   }
   const { host, updateInterval, logger, notifyUser,userNotification, userNotificationMessage, userNotificationTime,  } = Object.assign({}, defaults, opts)
-  
-
+ 
   // allows electron to be mocked in tests
   const electron = opts.electron || require('electron')
-
-
 
   let repo = opts.repo
   if (!repo) {
