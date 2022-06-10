@@ -18,7 +18,7 @@
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^2.0.0",
     "jest": "^22.4.3",
-    "semantic-release": "^17.2.3",
+    "semantic-release": "^19.0.3",
     "standard": "^14.3.4",
     "standard-markdown": "^6.0.0",
     "tsd": "^0.13.1",
