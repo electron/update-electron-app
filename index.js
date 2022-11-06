@@ -17,7 +17,7 @@ const userAgent = format(
 )
 const supportedPlatforms = ['darwin', 'win32']
 
-module.exports = function updater (opts = {}) {
+module.exports = function updater(opts = {}) {
   // check for bad input early, so it will be logged during development
   opts = validateInput(opts)
 
@@ -33,13 +33,13 @@ module.exports = function updater (opts = {}) {
     : opts.electron.app.on('ready', () => initUpdater(opts))
 }
 
-function initUpdater (opts) {
+function initUpdater(opts) {
   const { host, repo, updateInterval, logger, electron } = opts
   const { app, autoUpdater, dialog } = electron
   const feedURL = `${host}/${repo}/${process.platform}-${process.arch}/${app.getVersion()}`
   const requestHeaders = { 'User-Agent': userAgent }
 
-  function log (...args) {
+  function log(...args) {
     logger.log(...args)
   }
 
@@ -76,10 +76,13 @@ function initUpdater (opts) {
 
       const dialogOpts = {
         type: 'info',
-        buttons: ['Restart', 'Later'],
-        title: 'Application Update',
+        buttons: [
+          opts.dialog.restartButtonText,
+          opts.dialog.laterButtonText
+        ],
+        title: opts.dialog.title,
         message: process.platform === 'win32' ? releaseNotes : releaseName,
-        detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+        detail: opts.dialog.detail
       }
 
       dialog.showMessageBox(dialogOpts).then(({ response }) => {
@@ -93,13 +96,22 @@ function initUpdater (opts) {
   setInterval(() => { autoUpdater.checkForUpdates() }, ms(updateInterval))
 }
 
-function validateInput (opts) {
+function validateInput(opts) {
   const defaults = {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
     logger: console,
-    notifyUser: true
+    notifyUser: true,
+    dialog: {
+      title: 'Application Update',
+      detail: 'A new version has been downloaded. Restart the application to apply the updates.',
+      restartButtonText: 'Restart',
+      laterButtonText: 'Later'
+    }
   }
+
+  const assignedDialog = Object.assign({}, defaults.dialog, opts?.dialog || {})
+
   const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts)
 
   // allows electron to be mocked in tests
@@ -143,5 +155,5 @@ function validateInput (opts) {
     'function'
   )
 
-  return { host, repo, updateInterval, logger, electron, notifyUser }
+  return { host, repo, updateInterval, logger, electron, notifyUser, dialog: assignedDialog }
 }
