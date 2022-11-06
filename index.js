@@ -110,7 +110,7 @@ function validateInput(opts) {
     }
   }
 
-  const assignedDialog = Object.assign({}, defaults.dialog, opts?.dialog || {})
+  const assignedDialog = Object.assign({}, defaults.dialog, opts.dialog)
 
   const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts)
 
