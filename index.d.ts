@@ -1,9 +1,9 @@
 declare namespace updateElectronApp {
   export interface ILogger {
-    log(message: string): void;
-    info(message: string): void;
-    error(message: string): void;
-    warn(message: string): void;
+    log(message: string): void
+    info(message: string): void
+    error(message: string): void
+    warn(message: string): void
   }
 
   export interface IUpdateElectronAppOptions<L = ILogger> {
@@ -11,32 +11,58 @@ declare namespace updateElectronApp {
      * @param {String} repo A GitHub repository in the format `owner/repo`.
      *                      Defaults to your `package.json`'s `"repository"` field
      */
-    readonly repo?: string;
+    readonly repo?: string
     /**
      * @param {String} host Defaults to `https://update.electronjs.org`
      */
-    readonly host?: string;
+    readonly host?: string
     /**
      * @param {String} updateInterval How frequently to check for updates. Defaults to `10 minutes`.
      *                                Minimum allowed interval is `5 minutes`.
      */
-    readonly updateInterval?: string;
+    readonly updateInterval?: string
     /**
      * @param {Object} logger A custom logger object that defines a `log` function.
      *                        Defaults to `console`. See electron-log, a module
      *                        that aggregates logs from main and renderer processes into a single file.
      */
-    readonly logger?: L;
+    readonly logger?: L
     /**
      * @param {Boolean} notifyUser Defaults to `true`.  When enabled the user will be
      *                             prompted to apply the update immediately after download.
      */
-    readonly notifyUser?: boolean;
+    readonly notifyUser?: boolean
+
+    /**
+     * @param {Object} dialog A object with custom notify dialog options.
+     */
+    readonly dialog?: {
+      /**
+       * @param {String} title The title of the dialog box.
+       *                       Defaults to `Application Update`
+       */
+      readonly title?: string
+      /**
+       * @param {String} detail The text of the dialog box.
+       *                      Defaults to `A new version has been downloaded. Restart the application to apply the updates.`
+       */
+      readonly detail?: string
+      /**
+       * @param {String} restartButtonText The text of the restart button.
+       *                            Defaults to `Restart`
+       */
+      readonly restartButtonText?: string
+      /**
+       * @param {String} laterButtonText The text of the later button.
+       *                           Defaults to `Later`
+       */
+      readonly laterButtonText?: string
+    }
   }
 }
 
 declare function updater<L = updateElectronApp.ILogger>(
   opts?: updateElectronApp.IUpdateElectronAppOptions<L>
-): void;
+): void
 
 export = updater
