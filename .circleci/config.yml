@@ -23,7 +23,7 @@ jobs:
       - restore_cache:
           key: dependency-cache-{{ checksum "yarn.lock" }}
       - run: yarn --frozen-lockfile
-      - run: npx semantic-release
+      - run: npx semantic-release@17.4.5
 
 workflows:
   version: 2

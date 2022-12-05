@@ -21,6 +21,10 @@ const electron = {
   }
 }
 
+beforeEach(() => {
+  jest.useFakeTimers()
+})
+
 test('exports a function', () => {
   expect(typeof updater).toBe('function')
 })
