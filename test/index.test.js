@@ -1,4 +1,4 @@
-const updater = require('..')
+const { updateElectronApp: updater } = require('..')
 const repo = 'some-owner/some-repo'
 const os = require('os')
 const tmpdir = os.tmpdir()
@@ -7,7 +7,7 @@ const path = require('path')
 const electron = {
   app: {
     getVersion: () => { return '1.2.3' },
-    isReady: () => { return true },
+    isReady: () => true,
     on: (eventName) => { /* no-op */ },
     getAppPath: () => { return tmpdir }
   },
