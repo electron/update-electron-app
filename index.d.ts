@@ -32,6 +32,31 @@ declare namespace updateElectronApp {
      *                             prompted to apply the update immediately after download.
      */
     readonly notifyUser?: boolean;
+    /**
+     * @param {Object} dialog A object with custom notify dialog options.
+     */
+    readonly dialog?: {
+      /**
+       * @param {String} title The title of the dialog box.
+       *                       Defaults to `Application Update`
+       */
+      readonly title?: string;
+      /**
+       * @param {String} detail The text of the dialog box.
+       *                      Defaults to `A new version has been downloaded. Restart the application to apply the updates.`
+       */
+      readonly detail?: string;
+      /**
+       * @param {String} restartButtonText The text of the restart button.
+       *                            Defaults to `Restart`
+       */
+      readonly restartButtonText?: string;
+      /**
+       * @param {String} laterButtonText The text of the later button.
+       *                           Defaults to `Later`
+       */
+      readonly laterButtonText?: string;
+    };
   }
 }
 
