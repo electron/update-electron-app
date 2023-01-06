@@ -1,4 +1,7 @@
-version: 2
+version: 2.1
+
+orbs:
+  cfa: continuousauth/npm@1.0.2
 
 jobs:
   test:
@@ -15,27 +18,16 @@ jobs:
             - ./node_modules
       - run: yarn test
 
-  release:
-    docker:
-      - image: cimg/node:14.17
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run: yarn --frozen-lockfile
-      - run: npx semantic-release@17.4.5
-
 workflows:
-  version: 2
   test_and_release:
     # release when tests are successful
     jobs:
       - test
-      - release:
+      - cfa/release:
           requires:
             - test
           filters:
             branches:
               only:
                 - master
-          context: cfa
+          context: cfa-release
