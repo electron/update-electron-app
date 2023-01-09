@@ -25,8 +25,7 @@
   },
   "scripts": {
     "test": "jest && tsd && standard --fix && standard-markdown",
-    "watch": "jest --watch --notify --notifyMode=change --coverage",
-    "semantic-release": "semantic-release"
+    "watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "tsd": {
     "directory": "test"
