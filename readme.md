@@ -2,6 +2,9 @@
 
 > A drop-in module that adds autoUpdating capabilities to Electron apps
 
+[![CircleCI build status](https://circleci.com/gh/electron/update-electron-app/tree/master.svg?style=shield)](https://circleci.com/gh/electron/update-electron-app/tree/master)
+[![npm version](http://img.shields.io/npm/v/update-electron-app.svg)](https://npmjs.org/package/update-electron-app)
+
 Powered by the free and open-source [update.electronjs.org](https://update.electronjs.org) service.
 
 ![screenshot](screenshot.png)
@@ -89,6 +92,6 @@ If your app is packaged with `electron-builder`, you may not need this module.
 Builder has its own built-in mechanism for updating apps. Find out more at
 [electron.build/auto-update](https://www.electron.build/auto-update).
 
-[electron-forge]: https://github.com/electron-userland/electron-forge
+[electron-forge]: https://github.com/electron/forge
 [electron-installer-zip]: https://github.com/mongodb-js/electron-installer-zip
-[code signed]: https://github.com/electron/electron/blob/master/docs/tutorial/code-signing.md
+[code signed]: https://github.com/electron/electron/blob/main/docs/tutorial/code-signing.md
