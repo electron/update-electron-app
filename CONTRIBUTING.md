@@ -1,4 +1,4 @@
-# Contributing to Electron
+# Contributing to update-electron-app
 
 :+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
