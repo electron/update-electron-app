@@ -34,7 +34,7 @@ require('update-electron-app')()
 
 That's it! Here's what happens by default:
 
-- Repository URL is found in your app's `package.json` file. 
+- Repository URL is found in your app's `package.json` file.
 - Your app will check for updates at startup, then every ten minutes. This interval is [configurable](#API).
 - No need to wait for your app's `ready` event; the module figures that out.
 - If an update is found, it will automatically be downloaded in the background.
