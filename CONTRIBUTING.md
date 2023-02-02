@@ -1,48 +1,70 @@
-# Contributing to [update-electron-app](https://github.com/electron/update-electron-app)
-We love your input! We want to make contributing to this project as easy and transparent as possible, whether it's:
+# Contributing to Electron
 
-- Reporting a bug
-- Discussing the current state of the code
-- Submitting a fix
-- Proposing new features
-- Becoming a maintainer
+:+1::tada: First off, thanks for taking the time to contribute! :tada::+1:
 
-## We Develop with Github
-We use github to host code, to track issues and feature requests, as well as accept pull requests.
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.md).
+By participating, you are expected to uphold this code. Please report unacceptable
+behavior to coc@electronjs.org.
 
-## We Use [Github Flow](https://docs.github.com/en/get-started/quickstart/github-flow), So All Code Changes Happen Through Pull Requests
-Pull requests are the best way to propose changes to the codebase (we use [Github Flow](https://guides.github.com/introduction/flow/index.html)). We actively welcome your pull requests:
+The following is a set of guidelines for contributing to Electron.
+These are just guidelines, not rules, use your best judgment and feel free to
+propose changes to this document in a pull request.
 
-1. Fork the repo and create your branch from `main`.
-2. If you've added code that should be tested, add tests.
-3. If you've changed APIs, update the documentation.
-4. Ensure the test suite passes.
-5. Make sure your code lints.
-6. Issue that pull request!
+## [Issues](https://github.com/electron/update-electron-app/issues)
 
-## Any contributions you make will be under the MIT Software License
-In short, when you submit code changes, your submissions are understood to be under the same [MIT License](http://choosealicense.com/licenses/mit/) that covers the project. Feel free to contact the maintainers if that's a concern.
+Issues are created [here](https://github.com/electron/update-electron-app/issues/new).
 
-## Report bugs using Github's [issues](https://github.com/electron/update-electron-app/issues)
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/niceplaces/website/issues); it's that easy!
+* [How to Contribute in Issues](https://electronjs.org/docs/development/issues#how-to-contribute-in-issues)
+* [Asking for General Help](https://electronjs.org/docs/development/issues#asking-for-general-help)
+* [Submitting a Bug Report](https://electronjs.org/docs/development/issues#submitting-a-bug-report)
+* [Triaging a Bug Report](https://electronjs.org/docs/development/issues#triaging-a-bug-report)
+* [Resolving a Bug Report](https://electronjs.org/docs/development/issues#resolving-a-bug-report)
 
-## Write bug reports with detail, background, and sample code
-[This is an example](http://stackoverflow.com/q/12488905/180626) of a bug report I wrote, and I think it's not a bad model. Here's [another example from Craig Hockenberry](http://www.openradar.me/11905408), an app developer whom I greatly respect.
+### Issue Closure
 
-**Great Bug Reports** tend to have:
+Bug reports will be closed if the issue has been inactive and the latest affected version no longer receives support. At the moment, Electron maintains its three latest major versions, with a new major version being released every 8 weeks. (For more information on Electron's release cadence, see [this blog post](https://electronjs.org/blog/8-week-cadence).)
 
-- A quick summary and/or background
-- Steps to reproduce
-  - Be specific!
-  - Give sample code if you can. [stackoverflow question](http://stackoverflow.com/q/12488905/180626) includes sample code that *anyone* with a base R setup can run to reproduce what I was seeing
-- What you expected would happen
-- What actually happens
-- Notes (possibly including why you think this might be happening, or stuff you tried that didn't work)
+_If an issue has been closed and you still feel it's relevant, feel free to ping a maintainer or add a comment!_
 
-People *love* thorough bug reports. I'm not even kidding.
+### Languages
 
-## License
-By contributing, you agree that your contributions will be licensed under its MIT License.
+We accept issues in *any* language.
+When an issue is posted in a language besides English, it is acceptable and encouraged to post an English-translated copy as a reply.
+Anyone may post the translated reply.
+In most cases, a quick pass through translation software is sufficient.
+Having the original text _as well as_ the translation can help mitigate translation errors.
 
-## References
-This document was adapted from the open-source contribution guidelines for [this open-source contributing guidelines](https://gist.github.com/briandk/3d2e8b3ec8daf5a27a62)
+Responses to posted issues may or may not be in the original language.
+
+**Please note** that using non-English as an attempt to circumvent our [Code of Conduct](https://github.com/electron/electron/blob/main/CODE_OF_CONDUCT.md) will be an immediate, and possibly indefinite, ban from the project.
+
+## [Pull Requests](https://electronjs.org/docs/development/pull-requests)
+
+Pull Requests are the way concrete changes are made to the code, documentation,
+dependencies, and tools contained in the `electron/update-electron-app` repository.
+
+* [Setting up your local environment](https://electronjs.org/docs/development/pull-requests#setting-up-your-local-environment)
+  * [Step 1: Fork](https://electronjs.org/docs/development/pull-requests#step-1-fork)
+  * [Step 2: Build](https://electronjs.org/docs/development/pull-requests#step-2-build)
+  * [Step 3: Branch](https://electronjs.org/docs/development/pull-requests#step-3-branch)
+* [Making Changes](https://electronjs.org/docs/development/pull-requests#making-changes)
+  * [Step 4: Code](https://electronjs.org/docs/development/pull-requests#step-4-code)
+  * [Step 5: Commit](https://electronjs.org/docs/development/pull-requests#step-5-commit)
+    * [Commit message guidelines](https://electronjs.org/docs/development/pull-requests#commit-message-guidelines)
+  * [Step 6: Rebase](https://electronjs.org/docs/development/pull-requests#step-6-rebase)
+  * [Step 7: Test](https://electronjs.org/docs/development/pull-requests#step-7-test)
+  * [Step 8: Push](https://electronjs.org/docs/development/pull-requests#step-8-push)
+  * [Step 9: Opening the Pull Request](https://electronjs.org/docs/development/pull-requests#step-9-opening-the-pull-request)
+  * [Step 10: Discuss and Update](https://electronjs.org/docs/development/pull-requests#step-10-discuss-and-update)
+    * [Approval and Request Changes Workflow](https://electronjs.org/docs/development/pull-requests#approval-and-request-changes-workflow)
+  * [Step 11: Landing](https://electronjs.org/docs/development/pull-requests#step-11-landing)
+  * [Continuous Integration Testing](https://electronjs.org/docs/development/pull-requests#continuous-integration-testing)
+
+## Style Guides
+
+See [Coding Style](https://electronjs.org/docs/development/coding-style) for information about which standards Electron adheres to in different parts of its codebase.
+
+## Further Reading
+
+For more in-depth guides on developing Electron, see
+[/docs/development](/docs/development/README.md)
