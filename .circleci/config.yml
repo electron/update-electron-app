@@ -2,27 +2,26 @@ version: 2.1
 
 orbs:
   cfa: continuousauth/npm@1.0.2
-
-jobs:
-  test:
-    docker:
-      - image: cimg/node:14.17
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run: yarn --frozen-lockfile
-      - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-      - run: yarn test
+  node: electronjs/node@1.4.1
 
 workflows:
   test_and_release:
-    # release when tests are successful
+    # Run the test jobs first, then the release only when all the test jobs are successful
     jobs:
-      - test
+      - node/test:
+          name: test-<< matrix.executor >>-<< matrix.node-version >>
+          matrix:
+            alias: test
+            parameters:
+              executor:
+                - node/linux
+                - node/macos
+                - node/windows
+              node-version:
+                - '20.5'
+                - '18.17'
+                - '16.20'
+                - '14.21'
       - cfa/release:
           requires:
             - test
