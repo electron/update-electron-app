@@ -40,7 +40,7 @@ const { updateElectronApp } = require('update-electron-app');
 updateElectronApp();
 ```
 
-By default your epository URL is found in your app's `package.json` file.
+By default your epository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
 
 You can also specify custom options:
 
@@ -83,7 +83,7 @@ Once you've called `updateElectronApp` as documented above, that's it! Here's wh
 
 Additional Options:
 
-- `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`.
+- `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`. This is a human readable interval supported by the [`ms`](https://github.com/vercel/ms#readme) module
 - `logger` Object (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file.
 - `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
   prompted to apply the update immediately after download.

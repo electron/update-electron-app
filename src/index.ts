@@ -99,12 +99,8 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
 
 function initUpdater(opts: ReturnType<typeof validateInput>) {
   // exit early on unsupported platforms, e.g. `linux`
-  if (
-    typeof process !== 'undefined' &&
-    process.platform &&
-    !supportedPlatforms.includes(process.platform)
-  ) {
-    log(`Electron's autoUpdater does not support the '${process.platform}' platform`);
+  if (!supportedPlatforms.includes(process?.platform)) {
+    log(`Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`);
     return;
   }
 
