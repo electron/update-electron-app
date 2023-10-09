@@ -1,41 +1,32 @@
-version: 2
+version: 2.1
 
-jobs:
-  test:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run: yarn --frozen-lockfile
-      - save_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-          paths:
-            - ./node_modules
-      - run: yarn test
-
-  release:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - restore_cache:
-          key: dependency-cache-{{ checksum "yarn.lock" }}
-      - run: yarn --frozen-lockfile
-      - run: npx semantic-release@17.4.5
+orbs:
+  cfa: continuousauth/npm@1.0.2
+  node: electronjs/node@1.4.1
 
 workflows:
-  version: 2
   test_and_release:
-    # release when tests are successful
+    # Run the test jobs first, then the release only when all the test jobs are successful
     jobs:
-      - test
-      - release:
+      - node/test:
+          name: test-<< matrix.executor >>-<< matrix.node-version >>
+          matrix:
+            alias: test
+            parameters:
+              executor:
+                - node/linux
+                - node/macos
+                - node/windows
+              node-version:
+                - '20.5'
+                - '18.17'
+                - '16.20'
+                - '14.21'
+      - cfa/release:
           requires:
             - test
           filters:
             branches:
               only:
                 - master
-          context: cfa
+          context: cfa-release

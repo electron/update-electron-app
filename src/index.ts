@@ -1,14 +1,14 @@
-import assert from "assert";
-import isURL from "is-url";
-import isDev from "electron-is-dev";
-import ms from "ms";
-import gh from "github-url-to-object";
-import path from "path";
-import fs from "fs";
-import os from "os";
-import { format } from "util";
+import assert from 'assert';
+import isURL from 'is-url';
+import isDev from 'electron-is-dev';
+import ms from 'ms';
+import gh from 'github-url-to-object';
+import path from 'path';
+import fs from 'fs';
+import os from 'os';
+import { format } from 'util';
 
-import { app } from "electron";
+import { app } from 'electron';
 
 export interface ILogger {
   log(message: string): void;
@@ -77,15 +77,9 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly notifyUser?: boolean;
 }
 
-const pkg = require("../package.json");
-const userAgent = format(
-  "%s/%s (%s: %s)",
-  pkg.name,
-  pkg.version,
-  os.platform(),
-  os.arch()
-);
-const supportedPlatforms = ["darwin", "win32"];
+const pkg = require('../package.json');
+const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
+const supportedPlatforms = ['darwin', 'win32'];
 
 export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   // check for bad input early, so it will be logged during development
@@ -94,7 +88,7 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   // don't attempt to update during development
   if (isDev) {
     const message =
-      "update-electron-app config looks good; aborting updates since app is in development mode";
+      'update-electron-app config looks good; aborting updates since app is in development mode';
     opts.logger ? opts.logger.log(message) : console.log(message);
     return;
   }
@@ -106,13 +100,11 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
 function initUpdater(opts: ReturnType<typeof validateInput>) {
   // exit early on unsupported platforms, e.g. `linux`
   if (
-    typeof process !== "undefined" &&
+    typeof process !== 'undefined' &&
     process.platform &&
     !supportedPlatforms.includes(process.platform)
   ) {
-    log(
-      `Electron's autoUpdater does not support the '${process.platform}' platform`
-    );
+    log(`Electron's autoUpdater does not support the '${process.platform}' platform`);
     return;
   }
 
@@ -131,67 +123,61 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       feedURL = updateSource.baseUrl;
       if (process.platform === 'darwin') {
         feedURL += '/RELEASES.json';
-        serverType = 'json'
+        serverType = 'json';
       }
     }
   }
 
-  const requestHeaders = { "User-Agent": userAgent };
+  const requestHeaders = { 'User-Agent': userAgent };
 
   function log(...args: any[]) {
     logger.log(...args);
   }
 
-  log("feedURL", feedURL);
-  log("requestHeaders", requestHeaders);
+  log('feedURL', feedURL);
+  log('requestHeaders', requestHeaders);
   autoUpdater.setFeedURL({
     url: feedURL,
     headers: requestHeaders,
     serverType,
   });
 
-  autoUpdater.on("error", (err) => {
-    log("updater error");
+  autoUpdater.on('error', (err) => {
+    log('updater error');
     log(err);
   });
 
-  autoUpdater.on("checking-for-update", () => {
-    log("checking-for-update");
+  autoUpdater.on('checking-for-update', () => {
+    log('checking-for-update');
   });
 
-  autoUpdater.on("update-available", () => {
-    log("update-available; downloading...");
+  autoUpdater.on('update-available', () => {
+    log('update-available; downloading...');
   });
 
-  autoUpdater.on("update-not-available", () => {
-    log("update-not-available");
+  autoUpdater.on('update-not-available', () => {
+    log('update-not-available');
   });
 
   if (opts.notifyUser) {
     autoUpdater.on(
-      "update-downloaded",
+      'update-downloaded',
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
-        log("update-downloaded", [
-          event,
-          releaseNotes,
-          releaseName,
-          releaseDate,
-          updateURL,
-        ]);
+        log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
         const dialogOpts = {
-          type: "info",
-          buttons: ["Restart", "Later"],
-          title: "Application Update",
-          message: process.platform === "win32" ? releaseNotes : releaseName,
+          type: 'info',
+          buttons: ['Restart', 'Later'],
+          title: 'Application Update',
+          message: process.platform === 'win32' ? releaseNotes : releaseName,
           detail:
-            "A new version has been downloaded. Restart the application to apply the updates.",
+            'A new version has been downloaded. Restart the application to apply the updates.',
         };
 
         dialog.showMessageBox(dialogOpts).then(({ response }) => {
           if (response === 0) autoUpdater.quitAndInstall();
         });
-      }
+      },
     );
   }
 
@@ -203,35 +189,25 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 }
 
 function guessRepo(electron: typeof Electron.Main) {
-  const pkgBuf = fs.readFileSync(
-    path.join(electron.app.getAppPath(), "package.json")
-  );
+  const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'));
   const pkg = JSON.parse(pkgBuf.toString());
   const repoString = (pkg.repository && pkg.repository.url) || pkg.repository;
   const repoObject = gh(repoString);
-  assert(
-    repoObject,
-    "repo not found. Add repository string to your app's package.json file"
-  );
+  assert(repoObject, "repo not found. Add repository string to your app's package.json file");
   return `${repoObject.user}/${repoObject.repo}`;
 }
 
 function validateInput(opts: IUpdateElectronAppOptions) {
   const defaults = {
-    host: "https://update.electronjs.org",
-    updateInterval: "10 minutes",
+    host: 'https://update.electronjs.org',
+    updateInterval: '10 minutes',
     logger: console,
     notifyUser: true,
   };
-  const { host, updateInterval, logger, notifyUser } = Object.assign(
-    {},
-    defaults,
-    opts
-  );
+  const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts);
 
   // allows electron to be mocked in tests
-  const electron: typeof Electron.Main =
-    (opts as any).electron || require("electron");
+  const electron: typeof Electron.Main = (opts as any).electron || require('electron');
 
   let updateSource = opts.updateSource;
   // Handle migration from old properties + default to update service
@@ -246,17 +222,13 @@ function validateInput(opts: IUpdateElectronAppOptions) {
   switch (updateSource.type) {
     case UpdateSourceType.ElectronPublicUpdateService: {
       assert(
-        updateSource.repo &&
-          updateSource.repo.length &&
-          updateSource.repo.includes("/"),
-        "repo is required and should be in the format `owner/repo`"
+        updateSource.repo && updateSource.repo.length && updateSource.repo.includes('/'),
+        'repo is required and should be in the format `owner/repo`',
       );
 
       assert(
-        updateSource.host &&
-          isURL(updateSource.host) &&
-          updateSource.host.startsWith("https:"),
-        "host must be a valid HTTPS URL"
+        updateSource.host && isURL(updateSource.host) && updateSource.host.startsWith('https:'),
+        'host must be a valid HTTPS URL',
       );
       break;
     }
@@ -264,24 +236,21 @@ function validateInput(opts: IUpdateElectronAppOptions) {
       assert(
         updateSource.baseUrl &&
           isURL(updateSource.baseUrl) &&
-          updateSource.baseUrl.startsWith("https:"),
-        "baseUrl must be a valid HTTPS URL"
+          updateSource.baseUrl.startsWith('https:'),
+        'baseUrl must be a valid HTTPS URL',
       );
       break;
     }
   }
 
   assert(
-    typeof updateInterval === "string" && updateInterval.match(/^\d+/),
-    "updateInterval must be a human-friendly string interval like `20 minutes`"
+    typeof updateInterval === 'string' && updateInterval.match(/^\d+/),
+    'updateInterval must be a human-friendly string interval like `20 minutes`',
   );
 
-  assert(
-    ms(updateInterval) >= 5 * 60 * 1000,
-    "updateInterval must be `5 minutes` or more"
-  );
+  assert(ms(updateInterval) >= 5 * 60 * 1000, 'updateInterval must be `5 minutes` or more');
 
-  assert(logger && typeof logger.log, "function");
+  assert(logger && typeof logger.log, 'function');
 
   return { updateSource, updateInterval, logger, electron, notifyUser };
 }
