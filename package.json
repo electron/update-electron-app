@@ -29,7 +29,7 @@
     "typescript": "^4.9.4"
   },
   "scripts": {
-    "prepublishOnly": "tsc",
+    "prepare": "tsc",
     "test": "jest && tsd && standard --fix && standard-markdown",
     "watch": "jest --watch --notify --notifyMode=change --coverage"
   },
