@@ -98,13 +98,14 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
 }
 
 function initUpdater(opts: ReturnType<typeof validateInput>) {
+  const { updateSource, updateInterval, logger, electron } = opts;
+
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
     log(`Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`);
     return;
   }
 
-  const { updateSource, updateInterval, logger, electron } = opts;
   const { app, autoUpdater, dialog } = electron;
   let feedURL: string;
   let serverType: 'default' | 'json' = 'default';
