@@ -125,17 +125,7 @@ MIT
 
 ## See Also
 
-<<<<<<< HEAD:readme.md
 [electron-forge]: https://github.com/electron/forge
 [electron-installer-zip]: https://github.com/electron-userland/electron-installer-zip
 [electron-winstaller]: https://github.com/electron/windows-installer
 [code signed]: https://www.electronjs.org/docs/latest/tutorial/code-signing
-=======
-If your app is packaged with `electron-builder`, you may not need this module.
-Builder has its own built-in mechanism for updating apps. Find out more at
-[electron.build/auto-update](https://www.electron.build/auto-update).
-
-[electron-forge]: https://github.com/electron/forge
-[electron-installer-zip]: https://github.com/mongodb-js/electron-installer-zip
-[code signed]: https://github.com/electron/electron/blob/main/docs/tutorial/code-signing.md
->>>>>>> origin/master:README.md
