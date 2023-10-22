@@ -7,13 +7,9 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "dependencies": {
-    "electron-is-dev": "^2.0.0",
     "github-url-to-object": "^4.0.4",
     "is-url": "^1.2.4",
     "ms": "^2.1.1"
-  },
-  "peerDependencies": {
-    "electron": ">= 6.0.0"
   },
   "devDependencies": {
     "@continuous-auth/semantic-release-npm": "^3.0.0",

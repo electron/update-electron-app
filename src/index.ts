@@ -1,6 +1,5 @@
 import assert from 'assert';
 import isURL from 'is-url';
-import isDev from 'electron-is-dev';
 import ms from 'ms';
 import gh from 'github-url-to-object';
 import path from 'path';
@@ -86,7 +85,7 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   const safeOpts = validateInput(opts);
 
   // don't attempt to update during development
-  if (isDev) {
+  if (!app.isPackaged) {
     const message =
       'update-electron-app config looks good; aborting updates since app is in development mode';
     opts.logger ? opts.logger.log(message) : console.log(message);
