@@ -40,7 +40,7 @@ const { updateElectronApp } = require('update-electron-app')
 updateElectronApp()
 ```
 
-By default your epository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
+By default your repository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
 
 You can also specify custom options:
 

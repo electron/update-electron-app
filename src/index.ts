@@ -121,6 +121,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
         feedURL += '/RELEASES.json';
         serverType = 'json';
       }
+      break;
     }
   }
 
@@ -187,7 +188,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 function guessRepo(electron: typeof Electron.Main) {
   const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'));
   const pkg = JSON.parse(pkgBuf.toString());
-  const repoString = (pkg.repository && pkg.repository.url) || pkg.repository;
+  const repoString = pkg.repository?.url || pkg.repository;
   const repoObject = gh(repoString);
   assert(repoObject, "repo not found. Add repository string to your app's package.json file");
   return `${repoObject.user}/${repoObject.repo}`;
@@ -211,14 +212,14 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     updateSource = {
       type: UpdateSourceType.ElectronPublicUpdateService,
       repo: opts.repo || guessRepo(electron),
-      host: opts.host || defaults.host,
+      host,
     };
   }
 
   switch (updateSource.type) {
     case UpdateSourceType.ElectronPublicUpdateService: {
       assert(
-        updateSource.repo && updateSource.repo.length && updateSource.repo.includes('/'),
+        updateSource.repo?.includes('/'),
         'repo is required and should be in the format `owner/repo`',
       );
 
