@@ -1,19 +1,24 @@
 import { expectType } from 'tsd'
-import updater = require('../')
+import { updateElectronApp, UpdateSourceType } from '../'
 
-expectType<void>(updater())
+expectType<void>(updateElectronApp())
 
-interface ICustomLogger {
-  log(message: string, ...args: string[]): void;
-}
-
-const customLogger: ICustomLogger = {
+const customLogger = {
   log: (): void => {
+    return
+  },
+  info: (): void => {
+    return
+  },
+  error: (): void => {
+    return
+  },
+  warn: (): void => {
     return
   }
 }
 
-updater<ICustomLogger>({
+updateElectronApp({
   logger: customLogger,
   host: "https://github.com",
   notifyUser: true,
@@ -21,8 +26,29 @@ updater<ICustomLogger>({
   updateInterval: "10 minutes",
 });
 
-updater()
+updateElectronApp()
 
-updater({
+updateElectronApp({
   logger: console,
+})
+
+updateElectronApp({
+  updateSource: {
+    type: UpdateSourceType.ElectronPublicUpdateService,
+  }
+})
+
+updateElectronApp({
+  updateSource: {
+    type: UpdateSourceType.ElectronPublicUpdateService,
+    repo: 'a/b',
+    host: 'https://bar'
+  }
+})
+
+updateElectronApp({
+  updateSource: {
+    type: UpdateSourceType.StaticStorage,
+    baseUrl: 'https://foo',
+  }
 })

@@ -2,3 +2,4 @@
 .npmrc
 coverage
 node_modules
+dist
