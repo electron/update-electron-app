@@ -2,7 +2,7 @@
 
 > A drop-in module that adds autoUpdating capabilities to Electron apps
 
-[![CircleCI build status](https://circleci.com/gh/electron/update-electron-app/tree/master.svg?style=shield)](https://circleci.com/gh/electron/update-electron-app/tree/master)
+[![CircleCI build status](https://circleci.com/gh/electron/update-electron-app/tree/main.svg?style=shield)](https://circleci.com/gh/electron/update-electron-app/tree/main)
 [![npm version](http://img.shields.io/npm/v/update-electron-app.svg)](https://npmjs.org/package/update-electron-app)
 
 Supports multiple update sources:
