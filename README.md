@@ -123,8 +123,6 @@ For example that means that these files should exist:
 
 MIT
 
-## See Also
-
 [electron-forge]: https://github.com/electron/forge
 [electron-installer-zip]: https://github.com/electron-userland/electron-installer-zip
 [electron-winstaller]: https://github.com/electron/windows-installer
