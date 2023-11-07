@@ -50,22 +50,22 @@ export interface IDialogMessages {
    * @param {String} title The title of the dialog box.
    *                       Defaults to `Application Update`
    */
-  title: string
+  title: string;
   /**
    * @param {String} detail The text of the dialog box.
    *                        Defaults to `A new version has been downloaded. Restart the application to apply the updates.`
    */
-  detail: string
+  detail: string;
   /**
    * @param {String} restartButtonText The text of the restart button.
    *                                   Defaults to `Restart`
    */
-  restartButtonText: string
+  restartButtonText: string;
   /**
    * @param {String} laterButtonText The text of the later button.
    *                                 Defaults to `Later`
    */
-  laterButtonText: string
+  laterButtonText: string;
 }
 
 export interface IUpdateElectronAppOptions<L = ILogger> {
@@ -97,7 +97,7 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
    *                             prompted to apply the update immediately after download.
    */
   readonly notifyUser?: boolean;
-  readonly dialog?: IDialogMessages
+  readonly dialog?: IDialogMessages;
 }
 
 const pkg = require('../package.json');
@@ -186,7 +186,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
         log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
-        const { title, restartButtonText, laterButtonText, detail } = opts.dialog
+        const { title, restartButtonText, laterButtonText, detail } = opts.dialog;
 
         const dialogOpts = {
           type: 'info',
@@ -233,7 +233,7 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     }
   };
   const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts);
-  const assignedDialog = Object.assign({}, defaults.dialog, opts.dialog)
+  const assignedDialog = Object.assign({}, defaults.dialog, opts.dialog);
 
   // allows electron to be mocked in tests
   const electron: typeof Electron.Main = (opts as any).electron || require('electron');
