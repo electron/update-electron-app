@@ -7,8 +7,7 @@ import fs from 'fs';
 import os from 'os';
 import { format } from 'util';
 
-import { app } from 'electron';
-
+import { app, Event } from 'electron';
 export interface ILogger {
   log(message: string): void;
   info(message: string): void;
@@ -46,7 +45,7 @@ export interface IStaticUpdateSource {
 export type IUpdateSource = IElectronUpdateServiceSource | IStaticUpdateSource;
 
 export interface IUpdateInfo {
-  event: Electron.Event,
+  event: Event,
   releaseNotes: string,
   releaseName: string,
   releaseDate: Date,
@@ -224,7 +223,7 @@ export function makeUserNotifier(dialogProps?: IDialogMessages) {
   const assignedDialog = Object.assign({}, defaultDialogMessages, dialogProps);
 
   return (info: IUpdateInfo) => {
-    const { event, releaseNotes, releaseName, releaseDate, updateURL } = info;
+    const { releaseNotes, releaseName, releaseDate, updateURL } = info;
     const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
 
     const electron = (info as any).electron as typeof Electron.Main;
