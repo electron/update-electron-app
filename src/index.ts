@@ -45,6 +45,14 @@ export interface IStaticUpdateSource {
 
 export type IUpdateSource = IElectronUpdateServiceSource | IStaticUpdateSource;
 
+export interface IUpdateInfo {
+  event: Electron.Event,
+  releaseNotes: string,
+  releaseName: string,
+  releaseDate: Date,
+  updateURL: string
+};
+
 export interface IDialogMessages {
   /**
    * @param {String} title The title of the dialog box.
@@ -97,7 +105,7 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
    *                             prompted to apply the update immediately after download.
    */
   readonly notifyUser?: boolean;
-  readonly dialog?: IDialogMessages;
+  readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
 const pkg = require('../package.json');
@@ -186,19 +194,14 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
         log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
-        const { title, restartButtonText, laterButtonText, detail } = opts.dialog;
-
-        const dialogOpts = {
-          type: 'info',
-          buttons: [restartButtonText, laterButtonText],
-          title,
-          message: process.platform === 'win32' ? releaseNotes : releaseName,
-          detail,
-        };
-
-        dialog.showMessageBox(dialogOpts).then(({ response }) => {
-          if (response === 0) autoUpdater.quitAndInstall();
-        });
+        opts.onNotifyUser && opts.onNotifyUser({
+          event,
+          releaseNotes,
+          releaseDate,
+          releaseName,
+          updateURL,
+          electron
+        } as IUpdateInfo);
       },
     );
   }
@@ -208,6 +211,37 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   setInterval(() => {
     autoUpdater.checkForUpdates();
   }, ms(updateInterval));
+}
+
+export function makeUserNotifier(dialogProps?: IDialogMessages) {
+  const defaultDialogMessages = {
+    title: 'Application Update',
+    detail: 'A new version has been downloaded. Restart the application to apply the updates.',
+    restartButtonText: 'Restart',
+    laterButtonText: 'Later'
+  };
+
+  const assignedDialog = Object.assign({}, defaultDialogMessages, dialogProps);
+
+  return (info: IUpdateInfo) => {
+    const { event, releaseNotes, releaseName, releaseDate, updateURL } = info;
+    const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
+
+    const electron = (info as any).electron as typeof Electron.Main;
+    const { dialog, autoUpdater } = electron;
+
+    const dialogOpts = {
+      type: 'info',
+      buttons: [restartButtonText, laterButtonText],
+      title,
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail,
+    };
+
+    dialog.showMessageBox(dialogOpts).then(({ response }) => {
+      if (response === 0) autoUpdater.quitAndInstall();
+    });
+  };
 }
 
 function guessRepo(electron: typeof Electron.Main) {
@@ -225,15 +259,9 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     updateInterval: '10 minutes',
     logger: console,
     notifyUser: true,
-    dialog: {
-      title: 'Application Update',
-      detail: 'A new version has been downloaded. Restart the application to apply the updates.',
-      restartButtonText: 'Restart',
-      laterButtonText: 'Later'
-    }
   };
-  const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts);
-  const assignedDialog = Object.assign({}, defaults.dialog, opts.dialog);
+
+  const { host, updateInterval, logger, notifyUser, onNotifyUser } = Object.assign({}, defaults, opts);
 
   // allows electron to be mocked in tests
   const electron: typeof Electron.Main = (opts as any).electron || require('electron');
@@ -281,5 +309,5 @@ function validateInput(opts: IUpdateElectronAppOptions) {
 
   assert(logger && typeof logger.log, 'function');
 
-  return { updateSource, updateInterval, logger, electron, notifyUser, dialog: assignedDialog };
+  return { updateSource, updateInterval, logger, electron, notifyUser, onNotifyUser };
 }
