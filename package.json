@@ -12,7 +12,6 @@
     "ms": "^2.1.1"
   },
   "devDependencies": {
-    "@continuous-auth/semantic-release-npm": "^3.0.0",
     "@types/github-url-to-object": "^4.0.1",
     "@types/is-url": "^1.2.30",
     "@types/ms": "^0.7.31",
