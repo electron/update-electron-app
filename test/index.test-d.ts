@@ -1,54 +1,54 @@
-import { expectType } from 'tsd'
-import { updateElectronApp, UpdateSourceType } from '../'
+import { expectType } from 'tsd';
+import { updateElectron, UpdateSourceType } from '../';
 
-expectType<void>(updateElectronApp())
+expectType<void>(updateElectron.setup());
 
 const customLogger = {
   log: (): void => {
-    return
+    return;
   },
   info: (): void => {
-    return
+    return;
   },
   error: (): void => {
-    return
+    return;
   },
   warn: (): void => {
-    return
-  }
-}
+    return;
+  },
+};
 
-updateElectronApp({
+updateElectron.setup({
   logger: customLogger,
-  host: "https://github.com",
+  host: 'https://github.com',
   notifyUser: true,
-  repo: "HashimotoYT/hab",
-  updateInterval: "10 minutes",
+  repo: 'HashimotoYT/hab',
+  updateInterval: '10 minutes',
 });
 
-updateElectronApp()
+updateElectron.setup();
 
-updateElectronApp({
+updateElectron.setup({
   logger: console,
-})
+});
 
-updateElectronApp({
+updateElectron.setup({
   updateSource: {
     type: UpdateSourceType.ElectronPublicUpdateService,
-  }
-})
+  },
+});
 
-updateElectronApp({
+updateElectron.setup({
   updateSource: {
     type: UpdateSourceType.ElectronPublicUpdateService,
     repo: 'a/b',
-    host: 'https://bar'
-  }
-})
+    host: 'https://bar',
+  },
+});
 
-updateElectronApp({
+updateElectron.setup({
   updateSource: {
     type: UpdateSourceType.StaticStorage,
     baseUrl: 'https://foo',
-  }
-})
+  },
+});

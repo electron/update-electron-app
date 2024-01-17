@@ -36,8 +36,8 @@ npm i update-electron-app
 Drop this anywhere in your main process:
 
 ```js
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp()
+const { updateElectron } = require('update-electron-app')
+updateElectron.setup()
 ```
 
 By default your repository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
@@ -45,8 +45,8 @@ By default your repository URL is found in [your app's `package.json` file](http
 You can also specify custom options:
 
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
-updateElectronApp({
+const { updateElectron, UpdateSourceType } = require('update-electron-app')
+updateElectron.setup({
   updateSource: {
     type: UpdateSourceType.ElectronPublicUpdateService,
     repo: 'github-user/repo'
@@ -59,8 +59,8 @@ updateElectronApp({
 ### With static file storage
 
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
-updateElectronApp({
+const { updateElectron, UpdateSourceType } = require('update-electron-app')
+updateElectron.setup({
   updateSource: {
     type: UpdateSourceType.StaticStorage,
     baseUrl: `https://my-bucket.s3.amazonaws.com/my-app-updates/${process.platform}/${process.arch}`
@@ -70,7 +70,7 @@ updateElectronApp({
 
 ## What happens?
 
-Once you've called `updateElectronApp` as documented above, that's it! Here's what happens by default:
+Once you've called `updateElectron.setup()` as documented above, that's it! Here's what happens by default:
 
 - Your app will check for updates at startup, then every ten minutes. This interval is [configurable](#API).
 - No need to wait for your app's `ready` event; the module figures that out.
