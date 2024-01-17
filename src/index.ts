@@ -110,7 +110,7 @@ class updateElectronClass {
     else app.on('ready', () => this.initUpdater(safeOpts));
   }
 
-  initUpdater(opts: ReturnType<typeof this.validateInput>) {
+  private initUpdater(opts: ReturnType<typeof this.validateInput>) {
     const { updateSource, updateInterval, logger, electron } = opts;
 
     // exit early on unsupported platforms, e.g. `linux`
@@ -220,7 +220,7 @@ class updateElectronClass {
     this.isActive = false;
   }
 
-  guessRepo(electron: typeof Electron.Main) {
+  private guessRepo(electron: typeof Electron.Main) {
     const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'));
     const pkg = JSON.parse(pkgBuf.toString());
     const repoString = pkg.repository?.url || pkg.repository;
@@ -229,7 +229,7 @@ class updateElectronClass {
     return `${repoObject.user}/${repoObject.repo}`;
   }
 
-  validateInput(opts: IUpdateElectronAppOptions) {
+  private validateInput(opts: IUpdateElectronAppOptions) {
     const defaults = {
       host: 'https://update.electronjs.org',
       updateInterval: '10 minutes',
