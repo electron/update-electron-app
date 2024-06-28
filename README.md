@@ -16,7 +16,7 @@ Supports multiple update sources:
 Before using this module, make sure your Electron app meets these criteria:
 
 - Your app runs on macOS or Windows
-- Your builds are [code signed]
+- Your builds are [code signed] **(macOS only)**
 - **If** using `update.electronjs.org`
   - Your app has a public GitHub repository
   - Your builds are published to GitHub Releases
