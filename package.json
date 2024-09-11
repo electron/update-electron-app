@@ -1,5 +1,5 @@
 {
-  "name": "update-electron-app",
+  "name": "update-freevoice-app",
   "version": "0.0.0-development",
   "description": "A drop-in module that adds autoUpdating capabilities to Electron apps",
   "repository": "https://github.com/electron/update-electron-app",
