@@ -7,8 +7,7 @@ import fs from 'fs';
 import os from 'os';
 import { format } from 'util';
 
-import { app } from 'electron';
-
+import { app, Event } from 'electron';
 export interface ILogger {
   log(message: string): void;
   info(message: string): void;
@@ -45,6 +44,37 @@ export interface IStaticUpdateSource {
 
 export type IUpdateSource = IElectronUpdateServiceSource | IStaticUpdateSource;
 
+export interface IUpdateInfo {
+  event: Event,
+  releaseNotes: string,
+  releaseName: string,
+  releaseDate: Date,
+  updateURL: string
+};
+
+export interface IDialogMessages {
+  /**
+   * @param {String} title The title of the dialog box.
+   *                       Defaults to `Application Update`
+   */
+  title: string;
+  /**
+   * @param {String} detail The text of the dialog box.
+   *                        Defaults to `A new version has been downloaded. Restart the application to apply the updates.`
+   */
+  detail: string;
+  /**
+   * @param {String} restartButtonText The text of the restart button.
+   *                                   Defaults to `Restart`
+   */
+  restartButtonText: string;
+  /**
+   * @param {String} laterButtonText The text of the later button.
+   *                                 Defaults to `Later`
+   */
+  laterButtonText: string;
+}
+
 export interface IUpdateElectronAppOptions<L = ILogger> {
   /**
    * @param {String} repo A GitHub repository in the format `owner/repo`.
@@ -74,6 +104,7 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
    *                             prompted to apply the update immediately after download.
    */
   readonly notifyUser?: boolean;
+  readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
 const pkg = require('../package.json');
@@ -162,18 +193,14 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
         log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
-        const dialogOpts = {
-          type: 'info',
-          buttons: ['Restart', 'Later'],
-          title: 'Application Update',
-          message: process.platform === 'win32' ? releaseNotes : releaseName,
-          detail:
-            'A new version has been downloaded. Restart the application to apply the updates.',
-        };
-
-        dialog.showMessageBox(dialogOpts).then(({ response }) => {
-          if (response === 0) autoUpdater.quitAndInstall();
-        });
+        opts.onNotifyUser && opts.onNotifyUser({
+          event,
+          releaseNotes,
+          releaseDate,
+          releaseName,
+          updateURL,
+          electron
+        } as IUpdateInfo);
       },
     );
   }
@@ -183,6 +210,37 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   setInterval(() => {
     autoUpdater.checkForUpdates();
   }, ms(updateInterval));
+}
+
+export function makeUserNotifier(dialogProps?: IDialogMessages) {
+  const defaultDialogMessages = {
+    title: 'Application Update',
+    detail: 'A new version has been downloaded. Restart the application to apply the updates.',
+    restartButtonText: 'Restart',
+    laterButtonText: 'Later'
+  };
+
+  const assignedDialog = Object.assign({}, defaultDialogMessages, dialogProps);
+
+  return (info: IUpdateInfo) => {
+    const { releaseNotes, releaseName, releaseDate, updateURL } = info;
+    const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
+
+    const electron = (info as any).electron as typeof Electron.Main;
+    const { dialog, autoUpdater } = electron;
+
+    const dialogOpts = {
+      type: 'info',
+      buttons: [restartButtonText, laterButtonText],
+      title,
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail,
+    };
+
+    dialog.showMessageBox(dialogOpts).then(({ response }) => {
+      if (response === 0) autoUpdater.quitAndInstall();
+    });
+  };
 }
 
 function guessRepo(electron: typeof Electron.Main) {
@@ -201,7 +259,8 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     logger: console,
     notifyUser: true,
   };
-  const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts);
+
+  const { host, updateInterval, logger, notifyUser, onNotifyUser } = Object.assign({}, defaults, opts);
 
   // allows electron to be mocked in tests
   const electron: typeof Electron.Main = (opts as any).electron || require('electron');
@@ -249,5 +308,5 @@ function validateInput(opts: IUpdateElectronAppOptions) {
 
   assert(logger && typeof logger.log, 'function');
 
-  return { updateSource, updateInterval, logger, electron, notifyUser };
+  return { updateSource, updateInterval, logger, electron, notifyUser, onNotifyUser };
 }
