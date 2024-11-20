@@ -7,7 +7,7 @@ import fs from 'fs';
 import os from 'os';
 import { format } from 'util';
 
-import { app } from 'electron';
+import electron from 'electron';
 
 export interface ILogger {
   log(message: string): void;
@@ -94,24 +94,50 @@ class updateElectronClass {
   dialogButtonRestart: string = 'Restart';
   dialogButtonLater: string = 'Later';
 
-  setup(opts: IUpdateElectronAppOptions = {}) {
+  setupComplete: boolean = false;
+  electronInstance!: typeof electron;
+
+  constructor(electronOpts?: typeof electron) {
+    if (electronOpts) {
+      this.electronInstance = electronOpts;
+    } else {
+      this.electronInstance = electron;
+    }
+  }
+
+  setup(opts: IUpdateElectronAppOptions = {}, electronOpts?: typeof electron) {
+    if (this.setupComplete) {
+      throw new Error("updateElectron: Can't call the setup method twice.");
+    }
+
+    this.setupComplete = true;
+
+    // Either get the default electron instance or what user provided (mostly useful for test cases)
+    if (electronOpts) {
+      this.electronInstance = electronOpts;
+    } else {
+      this.electronInstance = electron;
+    }
+
     // check for bad input early, so it will be logged during development
     const safeOpts = this.validateInput(opts);
 
+    const electronApp = this.electronInstance.app;
+
     // don't attempt to update during development
-    if (!app.isPackaged) {
+    if (!electronApp.isPackaged) {
       const message =
         'update-electron-app config looks good; aborting updates since app is in development mode';
       opts.logger ? opts.logger.log(message) : console.log(message);
       return;
     }
 
-    if (safeOpts.electron.app.isReady()) this.initUpdater(safeOpts);
-    else app.on('ready', () => this.initUpdater(safeOpts));
+    if (electronApp.isReady()) this.initUpdater(safeOpts);
+    else electronApp.on('ready', () => this.initUpdater(safeOpts));
   }
 
   private initUpdater(opts: ReturnType<typeof this.validateInput>) {
-    const { updateSource, updateInterval, logger, electron } = opts;
+    const { updateSource, updateInterval, logger } = opts;
 
     // exit early on unsupported platforms, e.g. `linux`
     if (!supportedPlatforms.includes(process?.platform)) {
@@ -121,14 +147,14 @@ class updateElectronClass {
       return;
     }
 
-    const { app, autoUpdater, dialog } = electron;
+    
     let feedURL: string;
     let serverType: 'default' | 'json' = 'default';
     switch (updateSource.type) {
       case UpdateSourceType.ElectronPublicUpdateService: {
         feedURL = `${updateSource.host}/${updateSource.repo}/${process.platform}-${
           process.arch
-        }/${app.getVersion()}`;
+        }/${this.electronInstance.app.getVersion()}`;
         break;
       }
       case UpdateSourceType.StaticStorage: {
@@ -147,40 +173,42 @@ class updateElectronClass {
       logger.log(...args);
     }
 
+    const autoUpdater = this.electronInstance.autoUpdater;
+
     log('feedURL', feedURL);
     log('requestHeaders', requestHeaders);
-    autoUpdater.setFeedURL({
+   autoUpdater.setFeedURL({
       url: feedURL,
       headers: requestHeaders,
       serverType,
     });
 
-    autoUpdater.on('error', (err) => {
+   autoUpdater.on('error', (err) => {
       log('updater error');
       log(err);
       this.isChecking = false;
       this.isError = true;
     });
 
-    autoUpdater.on('checking-for-update', () => {
+   autoUpdater.on('checking-for-update', () => {
       log('checking-for-update');
       this.isChecking = true;
       this.isError = false;
     });
 
-    autoUpdater.on('update-available', () => {
+   autoUpdater.on('update-available', () => {
       log('update-available; downloading...');
       this.isChecking = false;
       this.isDownloading = true;
     });
 
-    autoUpdater.on('update-not-available', () => {
+   autoUpdater.on('update-not-available', () => {
       log('update-not-available');
       this.isChecking = false;
     });
 
     if (opts.notifyUser) {
-      autoUpdater.on(
+     autoUpdater.on(
         'update-downloaded',
         (event, releaseNotes, releaseName, releaseDate, updateURL) => {
           log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
@@ -195,7 +223,7 @@ class updateElectronClass {
             detail: this.dialogDetail,
           };
 
-          dialog.showMessageBox(dialogOpts).then(({ response }) => {
+          this.electronInstance.dialog.showMessageBox(dialogOpts).then(({ response }) => {
             if (response === 0) autoUpdater.quitAndInstall();
           });
         },
@@ -206,6 +234,7 @@ class updateElectronClass {
     // Clear up any previous timer we have initiated in case of a reconfiguration
     if (this.updateTimer) {
       clearInterval(this.updateTimer);
+      this.updateTimer = undefined;
     }
 
     // check for updates right away and keep checking later
@@ -284,11 +313,35 @@ class updateElectronClass {
 
     assert(logger && typeof logger.log, 'function');
 
-    return { updateSource, updateInterval, logger, electron, notifyUser };
+    return { updateSource, updateInterval, logger, notifyUser };
+  }
+
+  getInstance(
+    options: IUpdateElectronAppOptions,
+    electronOpts?: typeof electron
+  ): updateElectronClass {
+    if (electronOpts) {
+      this.electronInstance = electronOpts;
+    }
+
+    if (!this.setupComplete) {
+      this.setup(options);
+    } else {
+      this.validateInput(options);
+    }
+
+    return this;
+  }
+
+  static createInstance(): (
+    options: IUpdateElectronAppOptions,
+    electronOpts?: typeof electron
+  ) => updateElectronClass {
+    const newClass = new updateElectronClass();
+    return newClass.getInstance.bind(newClass);
   }
 }
 
-const updateElectron = new updateElectronClass();
-const updateElectronApp = updateElectron.setup;
+const updateElectronApp = updateElectronClass.createInstance();
 
-export { updateElectron, updateElectronApp };
+export default updateElectronApp;
