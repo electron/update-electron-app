@@ -81,8 +81,8 @@ const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(),
 const supportedPlatforms = ['darwin', 'win32'];
 const isHttpsUrl = (maybeURL: string) => {
   try {
-    const url = new URL(maybeURL);
-    return url.protocol === 'https:';
+    const { protocol } = new URL(maybeURL);
+    return protocol === 'https:';
   } catch (e) {
     return false;
   }
