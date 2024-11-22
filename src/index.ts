@@ -1,5 +1,4 @@
 import assert from 'assert';
-import isURL from 'is-url';
 import ms from 'ms';
 import gh from 'github-url-to-object';
 import path from 'path';
@@ -29,7 +28,8 @@ export interface IElectronUpdateServiceSource {
    */
   repo?: string;
   /**
-   * @param {String} host Defaults to `https://update.electronjs.org`
+   * @param {String} host Base HTTPS URL of the update server.
+   *                      Defaults to `https://update.electronjs.org`
    */
   host?: string;
 }
@@ -79,6 +79,14 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
 const pkg = require('../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
 const supportedPlatforms = ['darwin', 'win32'];
+const isHttpsUrl = (maybeURL: string) => {
+  try {
+    const url = new URL(maybeURL);
+    return url.protocol === 'https:';
+  } catch (e) {
+    return false;
+  }
+};
 
 export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   // check for bad input early, so it will be logged during development
@@ -101,7 +109,9 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
-    log(`Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`);
+    log(
+      `Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`,
+    );
     return;
   }
 
@@ -223,17 +233,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
         'repo is required and should be in the format `owner/repo`',
       );
 
-      assert(
-        updateSource.host && isURL(updateSource.host) && updateSource.host.startsWith('https:'),
-        'host must be a valid HTTPS URL',
-      );
+      assert(updateSource.host && isHttpsUrl(updateSource.host), 'host must be a valid HTTPS URL');
       break;
     }
     case UpdateSourceType.StaticStorage: {
       assert(
-        updateSource.baseUrl &&
-          isURL(updateSource.baseUrl) &&
-          updateSource.baseUrl.startsWith('https:'),
+        updateSource.baseUrl && isHttpsUrl(updateSource.baseUrl),
         'baseUrl must be a valid HTTPS URL',
       );
       break;
