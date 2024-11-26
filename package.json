@@ -6,6 +6,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
+  "publishConfig": {
+    "provenance": true
+  },
   "dependencies": {
     "github-url-to-object": "^4.0.4",
     "ms": "^2.1.1"
