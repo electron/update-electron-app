@@ -45,14 +45,14 @@ export interface IStaticUpdateSource {
 export type IUpdateSource = IElectronUpdateServiceSource | IStaticUpdateSource;
 
 export interface IUpdateInfo {
-  event: Event,
-  releaseNotes: string,
-  releaseName: string,
-  releaseDate: Date,
-  updateURL: string
-};
+  event: Event;
+  releaseNotes: string;
+  releaseName: string;
+  releaseDate: Date;
+  updateURL: string;
+}
 
-export interface IDialogMessages {
+export interface IUpdateDialogStrings {
   /**
    * @param {String} title The title of the dialog box.
    *                       Defaults to `Application Update`
@@ -104,6 +104,11 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
    *                             prompted to apply the update immediately after download.
    */
   readonly notifyUser?: boolean;
+  /**
+   * Optional callback that replaces the default user prompt dialog whenever the 'update-downloaded' event
+   * is fired. Only runs if {@link notifyUser} is `true`.
+   * @param info Information pertaining to the available update.
+   */
   readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
@@ -132,11 +137,13 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
-    log(`Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`);
+    log(
+      `Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`,
+    );
     return;
   }
 
-  const { app, autoUpdater, dialog } = electron;
+  const { app, autoUpdater } = electron;
   let feedURL: string;
   let serverType: 'default' | 'json' = 'default';
   switch (updateSource.type) {
@@ -193,14 +200,24 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
         log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
-        opts.onNotifyUser && opts.onNotifyUser({
+        if (typeof opts.onNotifyUser !== 'function') {
+          assert(
+            opts.onNotifyUser === undefined,
+            'onNotifyUser option must be a callback function or undefined',
+          );
+          log('update-downloaded: notifyUser is true, opening default dialog');
+          opts.onNotifyUser = makeUserNotifier();
+        } else {
+          log('update-downloaded: notifyUser is true, running custom onNotifyUser callback');
+        }
+
+        opts.onNotifyUser({
           event,
           releaseNotes,
           releaseDate,
           releaseName,
           updateURL,
-          electron
-        } as IUpdateInfo);
+        });
       },
     );
   }
@@ -212,21 +229,26 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   }, ms(updateInterval));
 }
 
-export function makeUserNotifier(dialogProps?: IDialogMessages) {
+/**
+ * Helper function that generates a callback for use with {@link IUpdateElectronAppOptions.onNotifyUser}.
+ * @param dialogProps Text to display in the dialog.
+ * @returns
+ */
+export function makeUserNotifier(dialogProps?: IUpdateDialogStrings) {
   const defaultDialogMessages = {
     title: 'Application Update',
     detail: 'A new version has been downloaded. Restart the application to apply the updates.',
     restartButtonText: 'Restart',
-    laterButtonText: 'Later'
+    laterButtonText: 'Later',
   };
 
   const assignedDialog = Object.assign({}, defaultDialogMessages, dialogProps);
 
   return (info: IUpdateInfo) => {
-    const { releaseNotes, releaseName, releaseDate, updateURL } = info;
+    const { releaseNotes, releaseName } = info;
     const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
 
-    const electron = (info as any).electron as typeof Electron.Main;
+    const electron: typeof Electron.Main = (info as any).electron || require('electron');
     const { dialog, autoUpdater } = electron;
 
     const dialogOpts = {
@@ -260,7 +282,11 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     notifyUser: true,
   };
 
-  const { host, updateInterval, logger, notifyUser, onNotifyUser } = Object.assign({}, defaults, opts);
+  const { host, updateInterval, logger, notifyUser, onNotifyUser } = Object.assign(
+    {},
+    defaults,
+    opts,
+  );
 
   // allows electron to be mocked in tests
   const electron: typeof Electron.Main = (opts as any).electron || require('electron');
