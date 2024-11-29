@@ -6,8 +6,9 @@
 [![npm version](http://img.shields.io/npm/v/update-electron-app.svg)](https://npmjs.org/package/update-electron-app)
 
 Supports multiple update sources:
-* The free and open-source [update.electronjs.org](https://update.electronjs.org) service.
-* Static file storage E.g. S3, Google Cloud Storage, etc.
+
+- The free and open-source [update.electronjs.org](https://update.electronjs.org) service.
+- Static file storage E.g. S3, Google Cloud Storage, etc.
 
 ![screenshot](screenshot.png)
 
@@ -36,8 +37,8 @@ npm i update-electron-app
 Drop this anywhere in your main process:
 
 ```js
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp()
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp();
 ```
 
 By default your repository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
@@ -45,27 +46,27 @@ By default your repository URL is found in [your app's `package.json` file](http
 You can also specify custom options:
 
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
+const { updateElectronApp, UpdateSourceType } = require('update-electron-app');
 updateElectronApp({
   updateSource: {
     type: UpdateSourceType.ElectronPublicUpdateService,
-    repo: 'github-user/repo'
+    repo: 'github-user/repo',
   },
   updateInterval: '1 hour',
-  logger: require('electron-log')
-})
+  logger: require('electron-log'),
+});
 ```
 
 ### With static file storage
 
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
+const { updateElectronApp, UpdateSourceType } = require('update-electron-app');
 updateElectronApp({
   updateSource: {
     type: UpdateSourceType.StaticStorage,
-    baseUrl: `https://my-bucket.s3.amazonaws.com/my-app-updates/${process.platform}/${process.arch}`
-  }
-})
+    baseUrl: `https://my-bucket.s3.amazonaws.com/my-app-updates/${process.platform}/${process.arch}`,
+  },
+});
 ```
 
 ## What happens?
@@ -85,7 +86,7 @@ Additional Options:
 
 - `updateInterval` String (optional) - How frequently to check for updates. Defaults to `10 minutes`. Minimum allowed interval is `5 minutes`. This is a human readable interval supported by the [`ms`](https://github.com/vercel/ms#readme) module
 - `logger` Object (optional) - A custom logger object that defines a `log` function. Defaults to `console`. See [electron-log](https://github.com/megahertz/electron-log), a module that aggregates logs from main and renderer processes into a single file.
-- `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
+- `notifyUser` Boolean (optional) - Defaults to `true`. When enabled the user will be
   prompted to apply the update immediately after download.
 
 ## FAQ
@@ -110,14 +111,15 @@ Yes :)
 #### I want to manually upload my builds to a static storage solution, where do I put them?
 
 If you publish your builds manually ensure the file structure is:
-* `**/{platform}/{arch}/{artifact}`
+
+- `**/{platform}/{arch}/{artifact}`
 
 For example that means that these files should exist:
-* `**/win32/x64/RELEASES`
-* `**/darwin/arm64/RELEASES.json`
-* `**/darwin/arm64/My App v1.0.0.zip` (or something similar)
-* ...
 
+- `**/win32/x64/RELEASES`
+- `**/darwin/arm64/RELEASES.json`
+- `**/darwin/arm64/My App v1.0.0.zip` (or something similar)
+- ...
 
 ## License
 
