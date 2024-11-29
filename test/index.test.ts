@@ -18,12 +18,15 @@ describe('updateElectronApp', () => {
 
   describe('repository', () => {
     const tmpdir = os.tmpdir();
-    fs.writeFileSync(path.join(tmpdir, 'package.json'), JSON.stringify({}));
+    const packageJson = path.join(tmpdir, 'package.json');
+    beforeAll(() => {
+      fs.writeFileSync(packageJson, JSON.stringify({}));
+    });
 
     it('is required', () => {
       expect(() => {
         updateElectronApp();
-      }).toThrowError("repo not found. Add repository string to your app's package.json file");
+      }).toThrow("repo not found. Add repository string to your app's package.json file");
     });
 
     it('from opts', () => {
@@ -31,11 +34,12 @@ describe('updateElectronApp', () => {
     });
 
     it('from package.json', () => {
-      fs.writeFileSync(
-        path.join(tmpdir, 'package.json'),
-        JSON.stringify({ repository: 'foo/bar' }),
-      );
+      fs.writeFileSync(packageJson, JSON.stringify({ repository: 'foo/bar' }));
       updateElectronApp();
+    });
+
+    afterAll(() => {
+      fs.rmSync(packageJson);
     });
   });
 
