@@ -1,12 +1,13 @@
-import assert from 'assert';
 import ms from 'ms';
 import gh from 'github-url-to-object';
-import path from 'path';
-import fs from 'fs';
-import os from 'os';
-import { format } from 'util';
 
-import { app } from 'electron';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { format } from 'node:util';
+
+import { app, autoUpdater, dialog } from 'electron';
 
 export interface ILogger {
   log(message: string): void;
@@ -100,12 +101,15 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
     return;
   }
 
-  if (safeOpts.electron.app.isReady()) initUpdater(safeOpts);
-  else app.on('ready', () => initUpdater(safeOpts));
+  if (app.isReady()) {
+    initUpdater(safeOpts);
+  } else {
+    app.on('ready', () => initUpdater(safeOpts));
+  }
 }
 
 function initUpdater(opts: ReturnType<typeof validateInput>) {
-  const { updateSource, updateInterval, logger, electron } = opts;
+  const { updateSource, updateInterval, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
@@ -115,7 +119,6 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
     return;
   }
 
-  const { app, autoUpdater, dialog } = electron;
   let feedURL: string;
   let serverType: 'default' | 'json' = 'default';
   switch (updateSource.type) {
@@ -195,8 +198,8 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   }, ms(updateInterval));
 }
 
-function guessRepo(electron: typeof Electron.Main) {
-  const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'));
+function guessRepo() {
+  const pkgBuf = fs.readFileSync(path.join(app.getAppPath(), 'package.json'));
   const pkg = JSON.parse(pkgBuf.toString());
   const repoString = pkg.repository?.url || pkg.repository;
   const repoObject = gh(repoString);
@@ -213,15 +216,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
   };
   const { host, updateInterval, logger, notifyUser } = Object.assign({}, defaults, opts);
 
-  // allows electron to be mocked in tests
-  const electron: typeof Electron.Main = (opts as any).electron || require('electron');
-
   let updateSource = opts.updateSource;
   // Handle migration from old properties + default to update service
   if (!updateSource) {
     updateSource = {
       type: UpdateSourceType.ElectronPublicUpdateService,
-      repo: opts.repo || guessRepo(electron),
+      repo: opts.repo || guessRepo(),
       host,
     };
   }
@@ -254,5 +254,5 @@ function validateInput(opts: IUpdateElectronAppOptions) {
 
   assert(logger && typeof logger.log, 'function');
 
-  return { updateSource, updateInterval, logger, electron, notifyUser };
+  return { updateSource, updateInterval, logger, notifyUser };
 }
