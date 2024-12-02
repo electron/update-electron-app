@@ -22,7 +22,9 @@
     "electron": "^33.2.1",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
+    "husky": "^9.1.7",
     "jest": "^29.0.0",
+    "lint-staged": "^15.2.10",
     "prettier": "^3.0.3",
     "ts-jest": "^29.2.5",
     "typescript": "^5.7.2",
@@ -30,7 +32,7 @@
   },
   "scripts": {
     "lint": "npx eslint src test && npx prettier . --check",
-    "prepare": "tsc",
+    "prepare": "tsc && husky install",
     "test": "jest",
     "watch": "jest --watch --notify --notifyMode=change --coverage"
   },
@@ -38,5 +40,9 @@
     "env": {
       "jest": true
     }
+  },
+  "lint-staged": {
+    "*.{js,ts}": "eslint --cache --fix",
+    "*.{js,ts,md,json}": "prettier --write"
   }
 }
