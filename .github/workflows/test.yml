@@ -17,9 +17,9 @@ jobs:
     strategy:
       matrix:
         node-version:
-          - '20.9'
-          - '18.17'
-          - '16.20'
+          - '22.11'
+          - '20.18'
+          - '18.20'
         os:
           - macos-latest
           - ubuntu-latest
