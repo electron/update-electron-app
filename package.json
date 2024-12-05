@@ -31,7 +31,7 @@
     "typescript-eslint": "^8.16.0"
   },
   "scripts": {
-    "lint": "npx eslint src test && npx prettier . --check",
+    "lint": "npx eslint src test && npx prettier '**/*.{ts,js,mts,mjs,cjs,cts}' --check",
     "prepare": "tsc && husky",
     "test": "jest",
     "watch": "jest --watch --notify --notifyMode=change --coverage"

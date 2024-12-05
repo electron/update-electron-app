@@ -36,40 +36,37 @@ npm i update-electron-app
 
 Drop this anywhere in your main process:
 
-<!-- prettier-ignore -->
 ```js
-const { updateElectronApp } = require('update-electron-app')
-updateElectronApp()
+const { updateElectronApp } = require('update-electron-app');
+updateElectronApp();
 ```
 
 By default your repository URL is found in [your app's `package.json` file](https://docs.npmjs.com/cli/v9/configuring-npm/package-json#repository).
 
 You can also specify custom options:
 
-<!-- prettier-ignore -->
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
+const { updateElectronApp, UpdateSourceType } = require('update-electron-app');
 updateElectronApp({
   updateSource: {
     type: UpdateSourceType.ElectronPublicUpdateService,
-    repo: 'github-user/repo'
+    repo: 'github-user/repo',
   },
   updateInterval: '1 hour',
-  logger: require('electron-log')
-})
+  logger: require('electron-log'),
+});
 ```
 
 ### With static file storage
 
-<!-- prettier-ignore -->
 ```js
-const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
+const { updateElectronApp, UpdateSourceType } = require('update-electron-app');
 updateElectronApp({
   updateSource: {
     type: UpdateSourceType.StaticStorage,
-    baseUrl: `https://my-bucket.s3.amazonaws.com/my-app-updates/${process.platform}/${process.arch}`
-  }
-})
+    baseUrl: `https://my-bucket.s3.amazonaws.com/my-app-updates/${process.platform}/${process.arch}`,
+  },
+});
 ```
 
 ## What happens?
