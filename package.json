@@ -37,7 +37,6 @@
     "watch": "jest --watch --notify --notifyMode=change --coverage"
   },
   "lint-staged": {
-    "*.{js,ts}": "eslint --cache --fix",
-    "*.{js,ts,md,json}": "prettier --write"
+    "*.{js,ts,cjs,cts,mjs,mts}": "eslint --cache --fix && prettier --write"
   }
 }
