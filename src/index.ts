@@ -77,6 +77,7 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly notifyUser?: boolean;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require('../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
 const supportedPlatforms = ['darwin', 'win32'];
@@ -84,7 +85,7 @@ const isHttpsUrl = (maybeURL: string) => {
   try {
     const { protocol } = new URL(maybeURL);
     return protocol === 'https:';
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -97,7 +98,11 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   if (!app.isPackaged) {
     const message =
       'update-electron-app config looks good; aborting updates since app is in development mode';
-    opts.logger ? opts.logger.log(message) : console.log(message);
+    if (opts.logger) {
+      opts.logger.log(message);
+    } else {
+      console.log(message);
+    }
     return;
   }
 
@@ -140,6 +145,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   const requestHeaders = { 'User-Agent': userAgent };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function log(...args: any[]) {
     logger.log(...args);
   }
@@ -175,7 +181,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
       (event, releaseNotes, releaseName, releaseDate, updateURL) => {
         log('update-downloaded', [event, releaseNotes, releaseName, releaseDate, updateURL]);
 
-        const dialogOpts = {
+        const dialogOpts: Electron.MessageBoxOptions = {
           type: 'info',
           buttons: ['Restart', 'Later'],
           title: 'Application Update',
