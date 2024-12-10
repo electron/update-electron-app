@@ -2,7 +2,7 @@
 
 > A drop-in module that adds autoUpdating capabilities to Electron apps
 
-[![CircleCI build status](https://circleci.com/gh/electron/update-electron-app/tree/master.svg?style=shield)](https://circleci.com/gh/electron/update-electron-app/tree/master)
+[![Test](https://github.com/electron/update-electron-app/actions/workflows/test.yml/badge.svg)](https://github.com/electron/update-electron-app/actions/workflows/test.yml)
 [![npm version](http://img.shields.io/npm/v/update-electron-app.svg)](https://npmjs.org/package/update-electron-app)
 
 Supports multiple update sources:
@@ -16,7 +16,7 @@ Supports multiple update sources:
 Before using this module, make sure your Electron app meets these criteria:
 
 - Your app runs on macOS or Windows
-- Your builds are [code signed]
+- Your builds are [code signed] **(macOS only)**
 - **If** using `update.electronjs.org`
   - Your app has a public GitHub repository
   - Your builds are published to GitHub Releases
@@ -122,8 +122,6 @@ For example that means that these files should exist:
 ## License
 
 MIT
-
-## See Also
 
 [electron-forge]: https://github.com/electron/forge
 [electron-installer-zip]: https://github.com/electron-userland/electron-installer-zip

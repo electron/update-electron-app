@@ -1,13 +1,14 @@
-import assert from 'assert';
-import isURL from 'is-url';
 import ms from 'ms';
 import gh from 'github-url-to-object';
-import path from 'path';
-import fs from 'fs';
-import os from 'os';
-import { format } from 'util';
 
-import { app, Event } from 'electron';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { format } from 'node:util';
+
+import { app, autoUpdater, dialog, Event } from 'electron';
+
 export interface ILogger {
   log(message: string): void;
   info(message: string): void;
@@ -28,7 +29,8 @@ export interface IElectronUpdateServiceSource {
    */
   repo?: string;
   /**
-   * @param {String} host Defaults to `https://update.electronjs.org`
+   * @param {String} host Base HTTPS URL of the update server.
+   *                      Defaults to `https://update.electronjs.org`
    */
   host?: string;
 }
@@ -112,9 +114,18 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require('../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
 const supportedPlatforms = ['darwin', 'win32'];
+const isHttpsUrl = (maybeURL: string) => {
+  try {
+    const { protocol } = new URL(maybeURL);
+    return protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
 
 export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   // check for bad input early, so it will be logged during development
@@ -124,16 +135,23 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
   if (!app.isPackaged) {
     const message =
       'update-electron-app config looks good; aborting updates since app is in development mode';
-    opts.logger ? opts.logger.log(message) : console.log(message);
+    if (opts.logger) {
+      opts.logger.log(message);
+    } else {
+      console.log(message);
+    }
     return;
   }
 
-  if (safeOpts.electron.app.isReady()) initUpdater(safeOpts);
-  else app.on('ready', () => initUpdater(safeOpts));
+  if (app.isReady()) {
+    initUpdater(safeOpts);
+  } else {
+    app.on('ready', () => initUpdater(safeOpts));
+  }
 }
 
 function initUpdater(opts: ReturnType<typeof validateInput>) {
-  const { updateSource, updateInterval, logger, electron } = opts;
+  const { updateSource, updateInterval, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
@@ -143,7 +161,6 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
     return;
   }
 
-  const { app, autoUpdater } = electron;
   let feedURL: string;
   let serverType: 'default' | 'json' = 'default';
   switch (updateSource.type) {
@@ -165,6 +182,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   const requestHeaders = { 'User-Agent': userAgent };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   function log(...args: any[]) {
     logger.log(...args);
   }
@@ -248,10 +266,7 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings) {
     const { releaseNotes, releaseName } = info;
     const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
 
-    const electron: typeof Electron.Main = (info as any).electron || require('electron');
-    const { dialog, autoUpdater } = electron;
-
-    const dialogOpts = {
+    const dialogOpts: Electron.MessageBoxOptions = {
       type: 'info',
       buttons: [restartButtonText, laterButtonText],
       title,
@@ -265,8 +280,8 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings) {
   };
 }
 
-function guessRepo(electron: typeof Electron.Main) {
-  const pkgBuf = fs.readFileSync(path.join(electron.app.getAppPath(), 'package.json'));
+function guessRepo() {
+  const pkgBuf = fs.readFileSync(path.join(app.getAppPath(), 'package.json'));
   const pkg = JSON.parse(pkgBuf.toString());
   const repoString = pkg.repository?.url || pkg.repository;
   const repoObject = gh(repoString);
@@ -288,15 +303,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
     opts,
   );
 
-  // allows electron to be mocked in tests
-  const electron: typeof Electron.Main = (opts as any).electron || require('electron');
-
   let updateSource = opts.updateSource;
   // Handle migration from old properties + default to update service
   if (!updateSource) {
     updateSource = {
       type: UpdateSourceType.ElectronPublicUpdateService,
-      repo: opts.repo || guessRepo(electron),
+      repo: opts.repo || guessRepo(),
       host,
     };
   }
@@ -308,17 +320,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
         'repo is required and should be in the format `owner/repo`',
       );
 
-      assert(
-        updateSource.host && isURL(updateSource.host) && updateSource.host.startsWith('https:'),
-        'host must be a valid HTTPS URL',
-      );
+      assert(updateSource.host && isHttpsUrl(updateSource.host), 'host must be a valid HTTPS URL');
       break;
     }
     case UpdateSourceType.StaticStorage: {
       assert(
-        updateSource.baseUrl &&
-          isURL(updateSource.baseUrl) &&
-          updateSource.baseUrl.startsWith('https:'),
+        updateSource.baseUrl && isHttpsUrl(updateSource.baseUrl),
         'baseUrl must be a valid HTTPS URL',
       );
       break;
@@ -334,5 +341,5 @@ function validateInput(opts: IUpdateElectronAppOptions) {
 
   assert(logger && typeof logger.log, 'function');
 
-  return { updateSource, updateInterval, logger, electron, notifyUser, onNotifyUser };
+  return { updateSource, updateInterval, logger, notifyUser, onNotifyUser };
 }
