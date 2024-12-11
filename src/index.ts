@@ -275,7 +275,9 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings) {
     };
 
     dialog.showMessageBox(dialogOpts).then(({ response }) => {
-      if (response === 0) autoUpdater.quitAndInstall();
+      if (response === 0) {
+        autoUpdater.quitAndInstall();
+      }
     });
   };
 }

@@ -24,10 +24,9 @@ module.exports = {
     setFeedURL: () => {
       /* no-op */
     },
+    quitAndInstall: jest.fn(),
   },
   dialog: {
-    showMessageBox: () => {
-      /* no-op */
-    },
+    showMessageBox: jest.fn(),
   },
 };
