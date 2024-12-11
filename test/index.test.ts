@@ -2,10 +2,10 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import { updateElectronApp } from '..';
-const repo = 'some-owner/some-repo';
+import { autoUpdater, dialog } from 'electron';
 
-jest.mock('electron');
+import { updateElectronApp, makeUserNotifier, IUpdateInfo, IUpdateDialogStrings } from '../src';
+const repo = 'some-owner/some-repo';
 
 beforeEach(() => {
   jest.useFakeTimers();
@@ -57,5 +57,58 @@ describe('updateElectronApp', () => {
         updateElectronApp({ repo, updateInterval: '20 seconds' });
       }).toThrow('updateInterval must be `5 minutes` or more');
     });
+  });
+});
+
+describe('makeUserNotifier', () => {
+  const fakeUpdateInfo: IUpdateInfo = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- not needed for fixture
+    event: {} as any,
+    releaseNotes: 'new release',
+    releaseName: 'v13.3.7',
+    releaseDate: new Date(),
+    updateURL: 'https://fake-update.url',
+  };
+
+  it('is a function that returns a callback function', () => {
+    expect(typeof makeUserNotifier).toBe('function');
+    expect(typeof makeUserNotifier()).toBe('function');
+  });
+
+  describe('callback', () => {
+    it.each([
+      ['does', 0, 1],
+      ['does not', 1, 0],
+    ])('%s call autoUpdater.quitAndInstall if the user responds with %i', (_, response, called) => {
+      (dialog.showMessageBox as jest.Mock).mockResolvedValueOnce({ response });
+      const notifier = makeUserNotifier();
+      notifier(fakeUpdateInfo);
+
+      expect(dialog.showMessageBox).toHaveBeenCalled();
+      // quitAndInstall is only called after the showMessageBox promise resolves
+      process.nextTick(() => {
+        expect(autoUpdater.quitAndInstall).toHaveBeenCalledTimes(called);
+      });
+    });
+  });
+
+  it('can customize dialog properties', () => {
+    const strings: IUpdateDialogStrings = {
+      title: 'Custom Update Title',
+      detail: 'Custom update details',
+      restartButtonText: 'Custom restart string',
+      laterButtonText: 'Maybe not',
+    };
+
+    (dialog.showMessageBox as jest.Mock).mockResolvedValue(0);
+    const notifier = makeUserNotifier(strings);
+    notifier(fakeUpdateInfo);
+    expect(dialog.showMessageBox).toHaveBeenCalledWith(
+      expect.objectContaining({
+        buttons: [strings.restartButtonText, strings.laterButtonText],
+        title: strings.title,
+        detail: strings.detail,
+      }),
+    );
   });
 });
