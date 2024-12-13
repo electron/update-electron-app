@@ -62,13 +62,16 @@ describe('updateElectronApp', () => {
 
 describe('makeUserNotifier', () => {
   const fakeUpdateInfo: IUpdateInfo = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- not needed for fixture
-    event: {} as any,
+    event: {} as Electron.Event,
     releaseNotes: 'new release',
     releaseName: 'v13.3.7',
     releaseDate: new Date(),
     updateURL: 'https://fake-update.url',
   };
+
+  beforeEach(() => {
+    jest.mocked(dialog.showMessageBox).mockReset();
+  });
 
   it('is a function that returns a callback function', () => {
     expect(typeof makeUserNotifier).toBe('function');
@@ -80,7 +83,9 @@ describe('makeUserNotifier', () => {
       ['does', 0, 1],
       ['does not', 1, 0],
     ])('%s call autoUpdater.quitAndInstall if the user responds with %i', (_, response, called) => {
-      (dialog.showMessageBox as jest.Mock).mockResolvedValueOnce({ response });
+      jest
+        .mocked(dialog.showMessageBox)
+        .mockResolvedValueOnce({ response, checkboxChecked: false });
       const notifier = makeUserNotifier();
       notifier(fakeUpdateInfo);
 
@@ -100,7 +105,7 @@ describe('makeUserNotifier', () => {
       laterButtonText: 'Maybe not',
     };
 
-    (dialog.showMessageBox as jest.Mock).mockResolvedValue(0);
+    jest.mocked(dialog.showMessageBox).mockResolvedValue({ response: 0, checkboxChecked: false });
     const notifier = makeUserNotifier(strings);
     notifier(fakeUpdateInfo);
     expect(dialog.showMessageBox).toHaveBeenCalledWith(

@@ -59,22 +59,22 @@ export interface IUpdateDialogStrings {
    * @param {String} title The title of the dialog box.
    *                       Defaults to `Application Update`
    */
-  title: string;
+  title?: string;
   /**
    * @param {String} detail The text of the dialog box.
    *                        Defaults to `A new version has been downloaded. Restart the application to apply the updates.`
    */
-  detail: string;
+  detail?: string;
   /**
    * @param {String} restartButtonText The text of the restart button.
    *                                   Defaults to `Restart`
    */
-  restartButtonText: string;
+  restartButtonText?: string;
   /**
    * @param {String} laterButtonText The text of the later button.
    *                                 Defaults to `Later`
    */
-  laterButtonText: string;
+  laterButtonText?: string;
 }
 
 export interface IUpdateElectronAppOptions<L = ILogger> {
@@ -109,7 +109,8 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   /**
    * Optional callback that replaces the default user prompt dialog whenever the 'update-downloaded' event
    * is fired. Only runs if {@link notifyUser} is `true`.
-   * @param info Information pertaining to the available update.
+   *
+   * @param info - Information pertaining to the available update.
    */
   readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
@@ -249,10 +250,10 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
 /**
  * Helper function that generates a callback for use with {@link IUpdateElectronAppOptions.onNotifyUser}.
- * @param dialogProps Text to display in the dialog.
- * @returns
+ *
+ * @param dialogProps - Text to display in the dialog.
  */
-export function makeUserNotifier(dialogProps?: IUpdateDialogStrings) {
+export function makeUserNotifier(dialogProps?: IUpdateDialogStrings): (info: IUpdateInfo) => void {
   const defaultDialogMessages = {
     title: 'Application Update',
     detail: 'A new version has been downloaded. Restart the application to apply the updates.',
