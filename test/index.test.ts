@@ -4,7 +4,13 @@ import path from 'node:path';
 
 import { autoUpdater, dialog } from 'electron';
 
-import { updateElectronApp, makeUserNotifier, IUpdateInfo, IUpdateDialogStrings } from '../src';
+import {
+  updateElectronApp,
+  makeUserNotifier,
+  IUpdateInfo,
+  IUpdateDialogStrings,
+  UpdateSourceType,
+} from '../src';
 const repo = 'some-owner/some-repo';
 
 beforeEach(() => {
@@ -48,6 +54,15 @@ describe('updateElectronApp', () => {
       expect(() => {
         updateElectronApp({ repo, host: 'http://example.com' });
       }).toThrow('host must be a valid HTTPS URL');
+    });
+
+    it('from default', () => {
+      updateElectronApp({
+        updateSource: {
+          type: UpdateSourceType.ElectronPublicUpdateService,
+          repo,
+        },
+      });
     });
   });
 
