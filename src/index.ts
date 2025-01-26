@@ -323,6 +323,10 @@ function validateInput(opts: IUpdateElectronAppOptions) {
         'repo is required and should be in the format `owner/repo`',
       );
 
+      if (!updateSource.host) {
+        updateSource.host = host;
+      }
+
       assert(updateSource.host && isHttpsUrl(updateSource.host), 'host must be a valid HTTPS URL');
       break;
     }
