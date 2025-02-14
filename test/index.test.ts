@@ -25,18 +25,19 @@ describe('updateElectronApp', () => {
   describe('repository', () => {
     const tmpdir = os.tmpdir();
     const packageJson = path.join(tmpdir, 'package.json');
+
     beforeAll(() => {
       fs.writeFileSync(packageJson, JSON.stringify({}));
     });
 
     it('is required', () => {
-      expect(() => {
-        updateElectronApp();
-      }).toThrow("repo not found. Add repository string to your app's package.json file");
+      expect(async () => {
+        await updateElectronApp();
+      }).rejects.toThrow("repo not found. Add repository string to your app's package.json file");
     });
 
-    it('from opts', () => {
-      updateElectronApp({ repo: 'foo/bar' });
+    it('from opts', async () => {
+      await updateElectronApp({ repo: 'foo/bar' });
     });
 
     it('from package.json', () => {
@@ -51,13 +52,13 @@ describe('updateElectronApp', () => {
 
   describe('host', () => {
     it('must a valid HTTPS URL', () => {
-      expect(() => {
-        updateElectronApp({ repo, host: 'http://example.com' });
-      }).toThrow('host must be a valid HTTPS URL');
+      expect(async () => {
+        await updateElectronApp({ repo, host: 'http://example.com' });
+      }).rejects.toThrow('host must be a valid HTTPS URL');
     });
 
-    it('from default', () => {
-      updateElectronApp({
+    it('from default', async () => {
+      await updateElectronApp({
         updateSource: {
           type: UpdateSourceType.ElectronPublicUpdateService,
           repo,
@@ -68,9 +69,9 @@ describe('updateElectronApp', () => {
 
   describe('updateInterval', () => {
     it('must be 5 minutes or more', () => {
-      expect(() => {
-        updateElectronApp({ repo, updateInterval: '20 seconds' });
-      }).toThrow('updateInterval must be `5 minutes` or more');
+      expect(async () => {
+        await updateElectronApp({ repo, updateInterval: '20 seconds' });
+      }).rejects.toThrow('updateInterval must be `5 minutes` or more');
     });
   });
 });
