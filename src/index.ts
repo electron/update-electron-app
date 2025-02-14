@@ -115,6 +115,13 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
+export interface IUpdater {
+  readonly isSupported: boolean;
+  readonly isLookingForUpdates: boolean;
+  readonly stopLookingForUpdates: () => void;
+  readonly startLookingForUpdates: () => void;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require('../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
@@ -128,30 +135,33 @@ const isHttpsUrl = (maybeURL: string) => {
   }
 };
 
-export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
-  // check for bad input early, so it will be logged during development
-  const safeOpts = validateInput(opts);
+export async function updateElectronApp(opts: IUpdateElectronAppOptions = {}): Promise<IUpdater> {
+  return new Promise((resolve, reject) => {
+    // check for bad input early, so it will be logged during development
+    const safeOpts = validateInput(opts);
 
-  // don't attempt to update during development
-  if (!app.isPackaged) {
-    const message =
-      'update-electron-app config looks good; aborting updates since app is in development mode';
-    if (opts.logger) {
-      opts.logger.log(message);
-    } else {
-      console.log(message);
+    // don't attempt to update during development
+    if (!app.isPackaged) {
+      const message =
+        'update-electron-app config looks good; aborting updates since app is in development mode';
+      if (opts.logger) {
+        opts.logger.log(message);
+      } else {
+        console.log(message);
+      }
+
+      return reject();
     }
-    return;
-  }
 
-  if (app.isReady()) {
-    initUpdater(safeOpts);
-  } else {
-    app.on('ready', () => initUpdater(safeOpts));
-  }
+    if (app.isReady()) {
+      resolve(initUpdater(safeOpts));
+    } else {
+      app.on('ready', () => resolve(initUpdater(safeOpts)));
+    }
+  });
 }
 
-function initUpdater(opts: ReturnType<typeof validateInput>) {
+function initUpdater(opts: ReturnType<typeof validateInput>): IUpdater {
   const { updateSource, updateInterval, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
@@ -159,7 +169,12 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
     log(
       `Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`,
     );
-    return;
+    return {
+      isSupported: false,
+      isLookingForUpdates: false,
+      stopLookingForUpdates: () => {},
+      startLookingForUpdates: () => {},
+    };
   }
 
   let feedURL: string;
@@ -243,9 +258,33 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   // check for updates right away and keep checking later
   autoUpdater.checkForUpdates();
-  setInterval(() => {
+
+  let intervalID = setInterval(() => {
     autoUpdater.checkForUpdates();
   }, ms(updateInterval));
+
+  let isLookingForUpdates = true;
+
+  return {
+    isSupported: true,
+    get isLookingForUpdates() {
+      return isLookingForUpdates;
+    },
+    stopLookingForUpdates() {
+      if (isLookingForUpdates) {
+        clearInterval(intervalID);
+        isLookingForUpdates = false;
+      }
+    },
+    startLookingForUpdates() {
+      if (!isLookingForUpdates) {
+        intervalID = setInterval(() => {
+          autoUpdater.checkForUpdates();
+        }, ms(updateInterval));
+        isLookingForUpdates = true;
+      }
+    },
+  };
 }
 
 /**
