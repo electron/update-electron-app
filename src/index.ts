@@ -135,33 +135,36 @@ const isHttpsUrl = (maybeURL: string) => {
   }
 };
 
-export async function updateElectronApp(opts: IUpdateElectronAppOptions = {}): Promise<IUpdater> {
-  return new Promise((resolve, reject) => {
-    // check for bad input early, so it will be logged during development
-    const safeOpts = validateInput(opts);
+export function updateElectronApp(opts: IUpdateElectronAppOptions = {}): IUpdater {
+  // check for bad input early, so it will be logged during development
+  const safeOpts = validateInput(opts);
 
-    // don't attempt to update during development
-    if (!app.isPackaged) {
-      const message =
-        'update-electron-app config looks good; aborting updates since app is in development mode';
-      if (opts.logger) {
-        opts.logger.log(message);
-      } else {
-        console.log(message);
-      }
-
-      return reject();
-    }
-
-    if (app.isReady()) {
-      resolve(initUpdater(safeOpts));
+  // don't attempt to update during development
+  if (!app.isPackaged) {
+    const message =
+      'update-electron-app config looks good; aborting updates since app is in development mode';
+    if (opts.logger) {
+      opts.logger.log(message);
     } else {
-      app.on('ready', () => resolve(initUpdater(safeOpts)));
+      console.log(message);
     }
-  });
+
+    //Return Updater but does not start
+    return makeUpdater(safeOpts);
+  }
+
+  const updater = makeUpdater(safeOpts);
+
+  if (app.isReady()) {
+    updater.startLookingForUpdates();
+  } else {
+    app.on('ready', () => updater.startLookingForUpdates());
+  }
+
+  return updater;
 }
 
-function initUpdater(opts: ReturnType<typeof validateInput>): IUpdater {
+function makeUpdater(opts: ReturnType<typeof validateInput>): IUpdater {
   const { updateSource, updateInterval, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
@@ -256,14 +259,8 @@ function initUpdater(opts: ReturnType<typeof validateInput>): IUpdater {
     );
   }
 
-  // check for updates right away and keep checking later
-  autoUpdater.checkForUpdates();
-
-  let intervalID = setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, ms(updateInterval));
-
-  let isLookingForUpdates = true;
+  let intervalID: ReturnType<typeof setInterval>;
+  let isLookingForUpdates = false;
 
   return {
     isSupported: true,
