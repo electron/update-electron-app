@@ -13,6 +13,7 @@ Supports multiple update sources:
 
 ## Requirements
 
+
 Before using this module, make sure your Electron app meets these criteria:
 
 - Your app runs on macOS or Windows
