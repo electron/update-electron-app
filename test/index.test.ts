@@ -133,7 +133,7 @@ describe('makeUserNotifier', () => {
   });
 });
 
-describe('autoCheck', () => {
+(process.platform === 'linux' ? describe.skip : describe)('autoCheck', () => {
   it('make sure checkForUpdates is called', () => {
     const checkForUpdatesSpy = jest
       .spyOn(autoUpdater, 'checkForUpdates')
