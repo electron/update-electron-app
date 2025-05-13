@@ -118,7 +118,7 @@ For example that means that these files should exist:
 * `**/darwin/arm64/My App v1.0.0.zip` (or something similar)
 * ...
 
-#### How does this module handle GitHub release states?
+### How does this module handle GitHub release states?
 
 If using the public update service, the https://update.electronjs.org server handles release fetching logic.
 Only releases that have valid SemVer tags and are _not_ marked as draft or pre-release will be collected by
