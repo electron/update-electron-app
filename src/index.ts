@@ -255,7 +255,12 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   }
 }
 
-export function checkForUpdates() {
+/**
+ * Checks for available updates for the application.
+ *   - `true` if an update is available
+ *   - `false` if no update is available
+ */
+export function checkForUpdates(): Promise<boolean> {
   return new Promise((resolve) => {
     autoUpdater.checkForUpdates();
 
