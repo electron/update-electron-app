@@ -133,7 +133,10 @@ describe('makeUserNotifier', () => {
   });
 });
 
-(process.platform === 'linux' ? describe.skip : describe)('autoCheck', () => {
+const supportedPlatforms = ['darwin', 'win32'];
+const isSupportedPlatform = supportedPlatforms.includes(process?.platform);
+
+(!isSupportedPlatform ? describe.skip : describe)('autoCheck', () => {
   it('make sure checkForUpdates is called', () => {
     const checkForUpdatesSpy = jest
       .spyOn(autoUpdater, 'checkForUpdates')
