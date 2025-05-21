@@ -91,24 +91,24 @@ Additional Options:
 
 ## FAQ
 
-#### What kinds of assets do I need to build?
+### What kinds of assets do I need to build?
 
 For macOS, you'll need to build a `.zip` file.
 Use [electron-forge] or [electron-installer-zip] to package your app as a zip.
 
 For Windows, you'll need to build a `.exe` and `.nupkg` files with [electron-forge] or [electron-winstaller].
 
-#### Why is my app launching multiple times?
+### Why is my app launching multiple times?
 
 Windows apps have an update process that requires multiple application restarts.
 You can use the [electron-squirrel-startup](https://github.com/mongodb-js/electron-squirrel-startup) module to improve this
 behavior.
 
-#### Can I use this module by uploading my private app's builds to a public GitHub repository?
+### Can I use this module by uploading my private app's builds to a public GitHub repository?
 
 Yes :)
 
-#### I want to manually upload my builds to a static storage solution, where do I put them?
+### I want to manually upload my builds to a static storage solution, where do I put them?
 
 If you publish your builds manually ensure the file structure is:
 * `**/{platform}/{arch}/{artifact}`
@@ -119,6 +119,14 @@ For example that means that these files should exist:
 * `**/darwin/arm64/My App v1.0.0.zip` (or something similar)
 * ...
 
+### How does this module handle GitHub release states?
+
+If using the public update service, the https://update.electronjs.org server handles release fetching logic.
+Only releases that have valid SemVer tags and are _not_ marked as draft or pre-release will be collected by
+the update service.
+
+The latest release returned by the [`repos/{owner}/{repo}/releases`](https://docs.github.com/en/rest/releases/releases?apiVersion=2022-11-28#list-releases)
+GitHub API containing all requisite binaries will be the update target.
 
 ## License
 
