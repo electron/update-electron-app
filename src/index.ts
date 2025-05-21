@@ -256,25 +256,6 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 }
 
 /**
- * Checks for available updates for the application.
- *   - `true` if an update is available
- *   - `false` if no update is available
- */
-export function checkForUpdates(): Promise<boolean> {
-  return new Promise((resolve) => {
-    autoUpdater.checkForUpdates();
-
-    autoUpdater.once('update-available', () => {
-      resolve(true);
-    });
-
-    autoUpdater.once('update-not-available', () => {
-      resolve(false);
-    });
-  });
-}
-
-/**
  * Helper function that generates a callback for use with {@link IUpdateElectronAppOptions.onNotifyUser}.
  *
  * @param dialogProps - Text to display in the dialog.
