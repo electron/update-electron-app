@@ -19,7 +19,7 @@
     "@types/jest": "^29.5.14",
     "@types/ms": "^0.7.31",
     "@types/node": "^22.10.1",
-    "electron": "^33.2.1",
+    "electron": "^35.7.5",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.13.0",
