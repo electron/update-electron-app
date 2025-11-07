@@ -19,7 +19,7 @@
     "@types/jest": "^29.5.14",
     "@types/ms": "^0.7.31",
     "@types/node": "^22.10.1",
-    "electron": "^33.2.1",
+    "electron": "^35.7.5",
     "eslint": "^9.15.0",
     "eslint-config-prettier": "^9.1.0",
     "globals": "^15.13.0",
@@ -32,8 +32,10 @@
     "typescript-eslint": "^8.16.0"
   },
   "scripts": {
-    "lint": "npx eslint src test && npx prettier '**/*.{ts,js,mts,mjs,cjs,cts}' --check",
-    "prepare": "tsc && husky",
+    "build": "tsc",
+    "lint": "eslint src test && prettier '**/*.{ts,js,mts,mjs,cjs,cts}' --check",
+    "prepack": "yarn build",
+    "prepare": "husky",
     "test": "jest",
     "watch": "jest --watch --notify --notifyMode=change --coverage"
   },
@@ -42,5 +44,6 @@
       "eslint --cache --fix",
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "yarn@4.10.3+sha512.c38cafb5c7bb273f3926d04e55e1d8c9dfa7d9c3ea1f36a4868fa028b9e5f72298f0b7f401ad5eb921749eb012eb1c3bb74bf7503df3ee43fd600d14a018266f"
 }
