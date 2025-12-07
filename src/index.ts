@@ -345,6 +345,7 @@ function validateInput(opts: IUpdateElectronAppOptions) {
   );
 
   assert(ms(updateInterval) >= 5 * 60 * 1000, 'updateInterval must be `5 minutes` or more');
+  assert(ms(updateInterval) < 2 ** 31, 'updateInterval must fit in a signed 32-bit integer');
 
   assert(logger && typeof logger.log, 'function');
 
