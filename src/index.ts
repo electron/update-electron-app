@@ -96,6 +96,11 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
    */
   readonly updateInterval?: string;
   /**
+   * @param {Boolean} autoCheck Decides whether to automatically check for updates
+   *                            Defaults to `true`.
+   */
+  readonly autoCheck?: boolean;
+  /**
    * @param {Object} logger A custom logger object that defines a `log` function.
    *                        Defaults to `console`. See electron-log, a module
    *                        that aggregates logs from main and renderer processes into a single file.
@@ -152,7 +157,7 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
 }
 
 function initUpdater(opts: ReturnType<typeof validateInput>) {
-  const { updateSource, updateInterval, logger } = opts;
+  const { updateSource, updateInterval, autoCheck, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
   if (!supportedPlatforms.includes(process?.platform)) {
@@ -241,11 +246,13 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
     );
   }
 
-  // check for updates right away and keep checking later
-  autoUpdater.checkForUpdates();
-  setInterval(() => {
+  if (autoCheck) {
+    // check for updates right away and keep checking later
     autoUpdater.checkForUpdates();
-  }, ms(updateInterval));
+    setInterval(() => {
+      autoUpdater.checkForUpdates();
+    }, ms(updateInterval));
+  }
 }
 
 /**
@@ -296,11 +303,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
   const defaults = {
     host: 'https://update.electronjs.org',
     updateInterval: '10 minutes',
+    autoCheck: true,
     logger: console,
     notifyUser: true,
   };
 
-  const { host, updateInterval, logger, notifyUser, onNotifyUser } = Object.assign(
+  const { host, updateInterval, autoCheck, logger, notifyUser, onNotifyUser } = Object.assign(
     {},
     defaults,
     opts,
@@ -349,5 +357,5 @@ function validateInput(opts: IUpdateElectronAppOptions) {
 
   assert(logger && typeof logger.log, 'function');
 
-  return { updateSource, updateInterval, logger, notifyUser, onNotifyUser };
+  return { updateSource, updateInterval, autoCheck, logger, notifyUser, onNotifyUser };
 }

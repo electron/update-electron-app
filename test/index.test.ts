@@ -132,3 +132,32 @@ describe('makeUserNotifier', () => {
     );
   });
 });
+
+const supportedPlatforms = ['darwin', 'win32'];
+const isSupportedPlatform = supportedPlatforms.includes(process?.platform);
+
+(!isSupportedPlatform ? describe.skip : describe)('autoCheck', () => {
+  it('make sure checkForUpdates is called', () => {
+    const checkForUpdatesSpy = jest
+      .spyOn(autoUpdater, 'checkForUpdates')
+      .mockImplementation(() => Promise.resolve());
+
+    updateElectronApp({ repo: 'foo/bar' });
+
+    expect(checkForUpdatesSpy).toHaveBeenCalled();
+
+    checkForUpdatesSpy.mockRestore();
+  });
+
+  it('make sure checkForUpdates is not called', () => {
+    const checkForUpdatesSpy = jest
+      .spyOn(autoUpdater, 'checkForUpdates')
+      .mockImplementation(() => Promise.resolve());
+
+    updateElectronApp({ repo: 'foo/bar', autoCheck: false });
+
+    expect(checkForUpdatesSpy).not.toHaveBeenCalled();
+
+    checkForUpdatesSpy.mockRestore();
+  });
+});
