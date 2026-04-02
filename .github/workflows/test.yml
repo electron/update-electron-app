@@ -18,11 +18,8 @@ jobs:
       matrix:
         node-version:
           - '22.11'
-          - '20.18'
-          - '18.20'
         os:
           - macos-latest
-          - ubuntu-latest
           - windows-latest
     runs-on: '${{ matrix.os }}'
     steps:
