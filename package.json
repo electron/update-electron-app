@@ -9,15 +9,9 @@
   "publishConfig": {
     "provenance": true
   },
-  "dependencies": {
-    "github-url-to-object": "^4.0.4",
-    "ms": "^2.1.1"
-  },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "@types/github-url-to-object": "^4.0.1",
     "@types/jest": "^29.5.14",
-    "@types/ms": "^0.7.31",
     "@types/node": "^22.10.1",
     "electron": "^35.7.5",
     "eslint": "^9.15.0",

@@ -44,6 +44,34 @@ describe('updateElectronApp', () => {
       updateElectronApp();
     });
 
+    it.each([
+      ['owner/repo', 'owner/repo'],
+      ['https://github.com/owner/repo', 'owner/repo'],
+      ['https://github.com/owner/repo.git', 'owner/repo'],
+      ['git+https://github.com/owner/repo.git', 'owner/repo'],
+      ['git@github.com:owner/repo.git', 'owner/repo'],
+      ['github:owner/repo', 'owner/repo'],
+      ['https://github.com/owner/my-repo.js', 'owner/my-repo.js'],
+      ['https://github.com/owner/my_repo', 'owner/my_repo'],
+    ])('parses repo from %s', (repository, expected) => {
+      fs.writeFileSync(packageJson, JSON.stringify({ repository }));
+      const logSpy = jest.spyOn(console, 'log').mockImplementation();
+      updateElectronApp();
+      expect(logSpy).toHaveBeenCalledWith('feedURL', expect.stringContaining(`/${expected}/`));
+      logSpy.mockRestore();
+    });
+
+    it.each([['https://github.com/owner/repo'], ['https://github.com/owner/repo.git']])(
+      'parses repo from repository.url: %s',
+      (url) => {
+        fs.writeFileSync(packageJson, JSON.stringify({ repository: { url } }));
+        const logSpy = jest.spyOn(console, 'log').mockImplementation();
+        updateElectronApp();
+        expect(logSpy).toHaveBeenCalledWith('feedURL', expect.stringContaining('/owner/repo/'));
+        logSpy.mockRestore();
+      },
+    );
+
     afterAll(() => {
       fs.rmSync(packageJson);
     });
@@ -69,7 +97,7 @@ describe('updateElectronApp', () => {
   describe('updateInterval', () => {
     it('must be 5 minutes or more', () => {
       expect(() => {
-        updateElectronApp({ repo, updateInterval: '20 seconds' });
+        updateElectronApp({ repo, updateInterval: 20_000 });
       }).toThrow('updateInterval must be `5 minutes` or more');
     });
   });

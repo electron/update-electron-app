@@ -1,6 +1,3 @@
-import ms from 'ms';
-import gh from 'github-url-to-object';
-
 import assert from 'node:assert';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -91,10 +88,11 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly host?: string;
   readonly updateSource?: IUpdateSource;
   /**
-   * @param {String} updateInterval How frequently to check for updates. Defaults to `10 minutes`.
-   *                                Minimum allowed interval is `5 minutes`.
+   * @param {Number} updateInterval How frequently to check for updates, in milliseconds.
+   *                                Defaults to `600000` (10 minutes).
+   *                                Minimum allowed interval is `300000` (5 minutes).
    */
-  readonly updateInterval?: string;
+  readonly updateInterval?: number;
   /**
    * @param {Object} logger A custom logger object that defines a `log` function.
    *                        Defaults to `console`. See electron-log, a module
@@ -245,7 +243,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   autoUpdater.checkForUpdates();
   setInterval(() => {
     autoUpdater.checkForUpdates();
-  }, ms(updateInterval));
+  }, updateInterval);
 }
 
 /**
@@ -286,16 +284,21 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings): (info: IUp
 function guessRepo() {
   const pkgBuf = fs.readFileSync(path.join(app.getAppPath(), 'package.json'));
   const pkg = JSON.parse(pkgBuf.toString());
-  const repoString = pkg.repository?.url || pkg.repository;
-  const repoObject = gh(repoString);
-  assert(repoObject, "repo not found. Add repository string to your app's package.json file");
-  return `${repoObject.user}/${repoObject.repo}`;
+  const repoString: string = pkg.repository?.url || pkg.repository;
+  assert(repoString, "repo not found. Add repository string to your app's package.json file");
+
+  // Matches owner/repo from GitHub URLs, git@ SSH URLs, or shorthand notation
+  const match = repoString.match(
+    /(?:github\.com[/:]|^github:|^)([\w-]+)\/([\w-.]+?)(?:\.git)?(?:[/#]|$)/,
+  );
+  assert(match, "repo not found. Add repository string to your app's package.json file");
+  return `${match[1]}/${match[2]}`;
 }
 
 function validateInput(opts: IUpdateElectronAppOptions) {
   const defaults = {
     host: 'https://update.electronjs.org',
-    updateInterval: '10 minutes',
+    updateInterval: 10 * 60 * 1000,
     logger: console,
     notifyUser: true,
   };
@@ -340,12 +343,12 @@ function validateInput(opts: IUpdateElectronAppOptions) {
   }
 
   assert(
-    typeof updateInterval === 'string' && updateInterval.match(/^\d+/),
-    'updateInterval must be a human-friendly string interval like `20 minutes`',
+    typeof updateInterval === 'number' && updateInterval > 0,
+    'updateInterval must be a positive number of milliseconds',
   );
 
-  assert(ms(updateInterval) >= 5 * 60 * 1000, 'updateInterval must be `5 minutes` or more');
-  assert(ms(updateInterval) < 2 ** 31, 'updateInterval must fit in a signed 32-bit integer');
+  assert(updateInterval >= 5 * 60 * 1000, 'updateInterval must be `5 minutes` or more');
+  assert(updateInterval < 2 ** 31, 'updateInterval must fit in a signed 32-bit integer');
 
   assert(logger && typeof logger.log, 'function');
 

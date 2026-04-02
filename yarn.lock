@@ -1238,13 +1238,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/github-url-to-object@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@types/github-url-to-object@npm:4.0.1"
-  checksum: 10c0/ee883cae1fac4594e6809e2c4220ce9d28103fcdc93176183e074b40e68dba4f265a95af738bd161fd7457926a173d5604dcf8398c7bdaa3ae663f2b38710fc0
-  languageName: node
-  linkType: hard
-
 "@types/graceful-fs@npm:^4.1.3":
   version: 4.1.5
   resolution: "@types/graceful-fs@npm:4.1.5"
@@ -1309,13 +1302,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/ff8f54fc49621210291f815fe5b15d809fd7d032941b3180743440bd507ecdf08b9e844625fa346af568c84bf34114eb378dcdc3e921a08ba1e2a08d7e3c809c
-  languageName: node
-  linkType: hard
-
-"@types/ms@npm:^0.7.31":
-  version: 0.7.31
-  resolution: "@types/ms@npm:0.7.31"
-  checksum: 10c0/19fae4f587651e8761c76a0c72ba8af1700d37054476878d164b758edcc926f4420ed06037a1a7fdddc1dbea25265895d743c8b2ea44f3f3f7ac06c449b9221e
   languageName: node
   linkType: hard
 
@@ -2805,15 +2791,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"github-url-to-object@npm:^4.0.4":
-  version: 4.0.4
-  resolution: "github-url-to-object@npm:4.0.4"
-  dependencies:
-    is-url: "npm:^1.1.0"
-  checksum: 10c0/1987e52dbc75e5d34dbf8e19104640d375b0dbf91e205aee95302256fe9c0ff4615e3b9ce3b6e7439bb1feb0463fd7605e5303b45f1c0e8c5faf2e5e5dab1393
-  languageName: node
-  linkType: hard
-
 "glob-parent@npm:^5.1.2":
   version: 5.1.2
   resolution: "glob-parent@npm:5.1.2"
@@ -3187,13 +3164,6 @@ __metadata:
   version: 2.0.0
   resolution: "is-stream@npm:2.0.0"
   checksum: 10c0/687f6bbd2b995573d33e6b40b2cbc8b9186a751aa3151c23e6fd2c4ca352e323a6dc010b09103f89c9ca0bf5c8c38f3fa8b74d5d9acd1c44f1499874d7e844f9
-  languageName: node
-  linkType: hard
-
-"is-url@npm:^1.1.0":
-  version: 1.2.4
-  resolution: "is-url@npm:1.2.4"
-  checksum: 10c0/0157a79874f8f95fdd63540e3f38c8583c2ef572661cd0693cda80ae3e42dfe8e9a4a972ec1b827f861d9a9acf75b37f7d58a37f94a8a053259642912c252bc3
   languageName: node
   linkType: hard
 
@@ -4235,7 +4205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ms@npm:2.1.2, ms@npm:^2.1.1":
+"ms@npm:2.1.2":
   version: 2.1.2
   resolution: "ms@npm:2.1.2"
   checksum: 10c0/a437714e2f90dbf881b5191d35a6db792efbca5badf112f87b9e1c712aace4b4b9b742dd6537f3edf90fd6f684de897cec230abde57e87883766712ddda297cc
@@ -5389,19 +5359,15 @@ __metadata:
   resolution: "update-electron-app@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.15.0"
-    "@types/github-url-to-object": "npm:^4.0.1"
     "@types/jest": "npm:^29.5.14"
-    "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:^22.10.1"
     electron: "npm:^35.7.5"
     eslint: "npm:^9.15.0"
     eslint-config-prettier: "npm:^9.1.0"
-    github-url-to-object: "npm:^4.0.4"
     globals: "npm:^15.13.0"
     husky: "npm:^9.1.7"
     jest: "npm:^29.0.0"
     lint-staged: "npm:^16.4.0"
-    ms: "npm:^2.1.1"
     prettier: "npm:^3.0.3"
     ts-jest: "npm:^29.2.5"
     typescript: "npm:^5.7.2"
