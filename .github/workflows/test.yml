@@ -22,7 +22,6 @@ jobs:
           - '18.20'
         os:
           - macos-latest
-          - ubuntu-latest
           - windows-latest
     runs-on: '${{ matrix.os }}'
     steps:
