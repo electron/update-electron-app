@@ -1,7 +1,9 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "oxc", "unicorn", "import"],
   "options": {
-    "typeAware": true
+    // Enable when tsconfig.json moves off of moduleResolution: node10
+    "typeAware": false
   },
   "env": {
     "builtin": true,

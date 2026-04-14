@@ -5,12 +5,14 @@
     "lib": ["es2017", "dom"],
     "sourceMap": true,
     "strict": true,
+    "rootDir": "src",
     "outDir": "dist",
     "types": ["node", "jest"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src"]
 }
