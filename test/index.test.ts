@@ -66,6 +66,38 @@ describe('updateElectronApp', () => {
     });
   });
 
+  describe('updateFormat', () => {
+    it('includes /msix/ in feed URL when process.windowsStore is true', () => {
+      const original = process.windowsStore;
+      Object.defineProperty(process, 'windowsStore', { value: true, configurable: true });
+      const logSpy = jest.spyOn(console, 'log');
+      updateElectronApp({
+        updateSource: {
+          type: UpdateSourceType.ElectronPublicUpdateService,
+          repo,
+        },
+      });
+      expect(logSpy).toHaveBeenCalledWith('feedURL', expect.stringContaining('/msix/'));
+      logSpy.mockRestore();
+      Object.defineProperty(process, 'windowsStore', { value: original, configurable: true });
+    });
+
+    it('omits format from feed URL when process.windowsStore is falsy', () => {
+      const original = process.windowsStore;
+      Object.defineProperty(process, 'windowsStore', { value: undefined, configurable: true });
+      const logSpy = jest.spyOn(console, 'log');
+      updateElectronApp({
+        updateSource: {
+          type: UpdateSourceType.ElectronPublicUpdateService,
+          repo,
+        },
+      });
+      expect(logSpy).toHaveBeenCalledWith('feedURL', expect.not.stringContaining('/msix/'));
+      logSpy.mockRestore();
+      Object.defineProperty(process, 'windowsStore', { value: original, configurable: true });
+    });
+  });
+
   describe('updateInterval', () => {
     it('must be 5 minutes or more', () => {
       expect(() => {
