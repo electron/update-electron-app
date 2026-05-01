@@ -166,9 +166,10 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
   let serverType: 'default' | 'json' = 'default';
   switch (updateSource.type) {
     case UpdateSourceType.ElectronPublicUpdateService: {
+      const formatSegment = process.windowsStore ? '/msix' : '';
       feedURL = `${updateSource.host}/${updateSource.repo}/${process.platform}-${
         process.arch
-      }/${app.getVersion()}`;
+      }${formatSegment}/${app.getVersion()}`;
       break;
     }
     case UpdateSourceType.StaticStorage: {
