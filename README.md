@@ -99,9 +99,10 @@ For Windows, you'll need to build a `.exe` and `.nupkg` files with [electron-for
 
 ### Why is my app launching multiple times?
 
-Windows apps have an update process that requires multiple application restarts.
-You can use the [electron-squirrel-startup](https://github.com/mongodb-js/electron-squirrel-startup) module to improve this
-behavior.
+On Windows, extra app launches indicate that your app isn't handling the Squirrel.Windows
+startup events (such as install, update, and uninstall) that fire during these operations.
+You can use the [electron-squirrel-startup](https://github.com/mongodb-js/electron-squirrel-startup) module to handle
+these events and avoid the unwanted launches.
 
 ### Can I use this module by uploading my private app's builds to a public GitHub repository?
 
