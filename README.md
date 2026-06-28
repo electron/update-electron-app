@@ -88,6 +88,23 @@ Additional Options:
 - `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
   prompted to apply the update immediately after download.
 
+#### Return value
+
+`updateElectronApp` returns an object with a `stopUpdates` function that stops the
+periodic update checks:
+
+```js
+const { updateElectronApp } = require('update-electron-app')
+const { stopUpdates } = updateElectronApp()
+
+// Later, when you no longer want to check for updates:
+stopUpdates()
+```
+
+`stopUpdates` is safe to call at any time, including before the app is ready or on
+platforms where updates aren't supported. Calling it more than once has no
+additional effect.
+
 ## FAQ
 
 ### What kinds of assets do I need to build?

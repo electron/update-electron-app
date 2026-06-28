@@ -105,6 +105,54 @@ describe('updateElectronApp', () => {
       }).toThrow('updateInterval must be `5 minutes` or more');
     });
   });
+
+  describe('stopUpdates', () => {
+    it('returns an object with a stopUpdates function', () => {
+      const result = updateElectronApp({
+        updateSource: { type: UpdateSourceType.ElectronPublicUpdateService, repo },
+      });
+      expect(typeof result.stopUpdates).toBe('function');
+    });
+
+    it('clears the update interval so no further checks run', () => {
+      // autoUpdater is only wired up on supported platforms, so pretend we're
+      // on macOS regardless of where the tests actually run.
+      const originalPlatform = process.platform;
+      Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
+      const checkSpy = jest.spyOn(autoUpdater, 'checkForUpdates');
+      try {
+        const { stopUpdates } = updateElectronApp({
+          updateSource: { type: UpdateSourceType.ElectronPublicUpdateService, repo },
+          updateInterval: '5 minutes',
+        });
+
+        // initial check fires immediately on startup
+        expect(checkSpy).toHaveBeenCalledTimes(1);
+
+        // an interval check would fire after the configured interval
+        jest.advanceTimersByTime(5 * 60 * 1000);
+        expect(checkSpy).toHaveBeenCalledTimes(2);
+
+        // after stopping, advancing time should not trigger any more checks
+        stopUpdates();
+        jest.advanceTimersByTime(5 * 60 * 1000 * 3);
+        expect(checkSpy).toHaveBeenCalledTimes(2);
+      } finally {
+        checkSpy.mockRestore();
+        Object.defineProperty(process, 'platform', { value: originalPlatform, configurable: true });
+      }
+    });
+
+    it('is a safe no-op when called twice', () => {
+      const { stopUpdates } = updateElectronApp({
+        updateSource: { type: UpdateSourceType.ElectronPublicUpdateService, repo },
+      });
+      expect(() => {
+        stopUpdates();
+        stopUpdates();
+      }).not.toThrow();
+    });
+  });
 });
 
 describe('makeUserNotifier', () => {
