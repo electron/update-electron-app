@@ -115,6 +115,17 @@ export interface IUpdateElectronAppOptions<L = ILogger> {
   readonly onNotifyUser?: (info: IUpdateInfo) => void;
 }
 
+export interface IUpdateElectronApp {
+  /**
+   * Stops the periodic update checks started by {@link updateElectronApp}.
+   *
+   * Safe to call at any time, including before the app is ready or on
+   * unsupported platforms where no update checks were scheduled. Calling it
+   * more than once has no additional effect.
+   */
+  stopUpdates(): void;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const pkg = require('../package.json');
 const userAgent = format('%s/%s (%s: %s)', pkg.name, pkg.version, os.platform(), os.arch());
@@ -128,9 +139,20 @@ const isHttpsUrl = (maybeURL: string) => {
   }
 };
 
-export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
+export function updateElectronApp(opts: IUpdateElectronAppOptions = {}): IUpdateElectronApp {
   // check for bad input early, so it will be logged during development
   const safeOpts = validateInput(opts);
+
+  // Holder for the interval id. Update checks may be scheduled later (once the
+  // app is ready), so keep a reference that the returned `stopUpdates` can read
+  // and clear whenever the interval eventually exists.
+  let updateIntervalId: ReturnType<typeof setInterval> | undefined;
+  const stopUpdates = () => {
+    if (updateIntervalId !== undefined) {
+      clearInterval(updateIntervalId);
+      updateIntervalId = undefined;
+    }
+  };
 
   // don't attempt to update during development
   if (!app.isPackaged) {
@@ -141,17 +163,23 @@ export function updateElectronApp(opts: IUpdateElectronAppOptions = {}) {
     } else {
       console.log(message);
     }
-    return;
+    return { stopUpdates };
   }
 
   if (app.isReady()) {
-    initUpdater(safeOpts);
+    updateIntervalId = initUpdater(safeOpts);
   } else {
-    app.on('ready', () => initUpdater(safeOpts));
+    app.on('ready', () => {
+      updateIntervalId = initUpdater(safeOpts);
+    });
   }
+
+  return { stopUpdates };
 }
 
-function initUpdater(opts: ReturnType<typeof validateInput>) {
+function initUpdater(
+  opts: ReturnType<typeof validateInput>,
+): ReturnType<typeof setInterval> | undefined {
   const { updateSource, updateInterval, logger } = opts;
 
   // exit early on unsupported platforms, e.g. `linux`
@@ -159,7 +187,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
     log(
       `Electron's autoUpdater does not support the '${process.platform}' platform. Ref: https://www.electronjs.org/docs/latest/api/auto-updater#platform-notices`,
     );
-    return;
+    return undefined;
   }
 
   let feedURL: string;
@@ -244,7 +272,7 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
 
   // check for updates right away and keep checking later
   autoUpdater.checkForUpdates();
-  setInterval(() => {
+  return setInterval(() => {
     autoUpdater.checkForUpdates();
   }, ms(updateInterval));
 }
