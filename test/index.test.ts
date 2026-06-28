@@ -142,6 +142,21 @@ describe('makeUserNotifier', () => {
         expect(autoUpdater.quitAndInstall).toHaveBeenCalledTimes(called);
       });
     });
+
+    it.each([0, 1])('forwards the response index %i to the optional callback', async (response) => {
+      jest
+        .mocked(dialog.showMessageBox)
+        .mockResolvedValueOnce({ response, checkboxChecked: false });
+      const callback = jest.fn();
+      const notifier = makeUserNotifier();
+      notifier(fakeUpdateInfo, callback);
+
+      // the callback runs once the showMessageBox promise resolves; flush the
+      // microtask queue (timers are faked, so we can't rely on setImmediate)
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(callback).toHaveBeenCalledWith(response);
+    });
   });
 
   it('can customize dialog properties', () => {

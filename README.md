@@ -88,6 +88,29 @@ Additional Options:
 - `notifyUser` Boolean (optional) - Defaults to `true`.  When enabled the user will be
   prompted to apply the update immediately after download.
 
+### `makeUserNotifier(dialogProps)`
+
+Returns the default notifier callback used when `notifyUser` is `true`. The
+returned function accepts an optional second argument, `callback(response)`,
+which is invoked with the index of the dialog button the user clicked
+(`0` = restart, `1` = later). This lets you react when the user chooses
+"Later" — for example, to surface your own "restart now" UI:
+
+```js
+const { makeUserNotifier, updateElectronApp } = require('update-electron-app')
+
+const notifier = makeUserNotifier()
+updateElectronApp({
+  onNotifyUser: (info) => {
+    notifier(info, (response) => {
+      if (response === 1) {
+        // user clicked "Later"
+      }
+    })
+  },
+})
+```
+
 ## FAQ
 
 ### What kinds of assets do I need to build?

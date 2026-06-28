@@ -254,7 +254,9 @@ function initUpdater(opts: ReturnType<typeof validateInput>) {
  *
  * @param dialogProps - Text to display in the dialog.
  */
-export function makeUserNotifier(dialogProps?: IUpdateDialogStrings): (info: IUpdateInfo) => void {
+export function makeUserNotifier(
+  dialogProps?: IUpdateDialogStrings,
+): (info: IUpdateInfo, callback?: (response: number) => void) => void {
   const defaultDialogMessages = {
     title: 'Application Update',
     detail: 'A new version has been downloaded. Restart the application to apply the updates.',
@@ -264,7 +266,7 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings): (info: IUp
 
   const assignedDialog = Object.assign({}, defaultDialogMessages, dialogProps);
 
-  return (info: IUpdateInfo) => {
+  return (info: IUpdateInfo, callback?: (response: number) => void) => {
     const { releaseNotes, releaseName } = info;
     const { title, restartButtonText, laterButtonText, detail } = assignedDialog;
 
@@ -280,6 +282,9 @@ export function makeUserNotifier(dialogProps?: IUpdateDialogStrings): (info: IUp
       if (response === 0) {
         autoUpdater.quitAndInstall();
       }
+      // forward the clicked button index (0 = restart, 1 = later) so callers
+      // can react to the user choosing "Later"
+      callback?.(response);
     });
   };
 }
