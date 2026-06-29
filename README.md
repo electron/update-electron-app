@@ -114,6 +114,12 @@ Use [electron-forge] or [electron-installer-zip] to package your app as a zip.
 
 For Windows, you'll need to build a `.exe` and `.nupkg` files with [electron-forge] or [electron-winstaller].
 
+For Windows auto-updates to work, make sure every GitHub Release also has the following Squirrel.Windows assets attached, otherwise the update will silently fail:
+* `RELEASES` - the manifest that Squirrel reads to discover available updates
+* `*-full.nupkg` - the full update package
+* `*.exe` - the installer
+* `*-delta.nupkg` - optional, smaller delta packages used to speed up updates when present
+
 ### Why is my app launching multiple times?
 
 On Windows, extra app launches indicate that your app isn't handling the Squirrel.Windows
