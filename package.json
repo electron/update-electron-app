@@ -28,6 +28,12 @@
     "ts-jest": "^29.2.5",
     "typescript": "^6.0.2"
   },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "oxlint && oxfmt --check .",
