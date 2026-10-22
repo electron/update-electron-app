@@ -1985,8 +1985,8 @@ __metadata:
   linkType: hard
 
 "electron@npm:^42.11.3":
-  version: 42.11.3
-  resolution: "electron@npm:42.11.3"
+  version: 42.11.18
+  resolution: "electron@npm:42.11.18"
   dependencies:
     "@electron-internal/extract-zip": "npm:^1.0.1"
     "@electron/get": "npm:^5.0.0"
@@ -1994,7 +1994,7 @@ __metadata:
   bin:
     electron: cli.js
     install-electron: install.js
-  checksum: 10c0/42ec2174199864f193e0bf74f7a35e040f51e2749482c6e1a6d0277deff19c423175063496938dcb8ab3e00b4e084105a4788dcb40ff863169c3b6f1f319404d
+  checksum: 10c0/f26a5e78e36160ad0e5097592ccad9296e059d8279577b8f94dbda070bd568278f973158f5fc0170dad9b63aa8c7d6e2c8a5f987bf0304edd9797018de54bf6b
   languageName: node
   linkType: hard
 
