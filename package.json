@@ -38,7 +38,7 @@
     "lint": "oxlint && oxfmt --check .",
     "prepack": "yarn build",
     "prepare": "husky",
-    "test": "vitest run",
+    "test": "tsc -p tsconfig.test.json && vitest run",
     "watch": "vitest"
   },
   "lint-staged": {
