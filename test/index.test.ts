@@ -3,6 +3,7 @@ import os from 'node:os';
 import path from 'node:path';
 
 import { autoUpdater, dialog } from 'electron';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   updateElectronApp,
@@ -11,10 +12,13 @@ import {
   IUpdateDialogStrings,
   UpdateSourceType,
 } from '../src';
+
+vi.mock('electron', () => import('./__mocks__/electron'));
+
 const repo = 'some-owner/some-repo';
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers();
 });
 
 describe('updateElectronApp', () => {
@@ -70,7 +74,7 @@ describe('updateElectronApp', () => {
     it('includes /msix/ in feed URL when process.windowsStore is true', () => {
       const original = process.windowsStore;
       Object.defineProperty(process, 'windowsStore', { value: true, configurable: true });
-      const logSpy = jest.spyOn(console, 'log');
+      const logSpy = vi.spyOn(console, 'log');
       updateElectronApp({
         updateSource: {
           type: UpdateSourceType.ElectronPublicUpdateService,
@@ -85,7 +89,7 @@ describe('updateElectronApp', () => {
     it('omits format from feed URL when process.windowsStore is falsy', () => {
       const original = process.windowsStore;
       Object.defineProperty(process, 'windowsStore', { value: undefined, configurable: true });
-      const logSpy = jest.spyOn(console, 'log');
+      const logSpy = vi.spyOn(console, 'log');
       updateElectronApp({
         updateSource: {
           type: UpdateSourceType.ElectronPublicUpdateService,
@@ -119,7 +123,7 @@ describe('updateElectronApp', () => {
       // on macOS regardless of where the tests actually run.
       const originalPlatform = process.platform;
       Object.defineProperty(process, 'platform', { value: 'darwin', configurable: true });
-      const checkSpy = jest.spyOn(autoUpdater, 'checkForUpdates');
+      const checkSpy = vi.spyOn(autoUpdater, 'checkForUpdates');
       try {
         const { stopUpdates } = updateElectronApp({
           updateSource: { type: UpdateSourceType.ElectronPublicUpdateService, repo },
@@ -130,12 +134,12 @@ describe('updateElectronApp', () => {
         expect(checkSpy).toHaveBeenCalledTimes(1);
 
         // an interval check would fire after the configured interval
-        jest.advanceTimersByTime(5 * 60 * 1000);
+        vi.advanceTimersByTime(5 * 60 * 1000);
         expect(checkSpy).toHaveBeenCalledTimes(2);
 
         // after stopping, advancing time should not trigger any more checks
         stopUpdates();
-        jest.advanceTimersByTime(5 * 60 * 1000 * 3);
+        vi.advanceTimersByTime(5 * 60 * 1000 * 3);
         expect(checkSpy).toHaveBeenCalledTimes(2);
       } finally {
         checkSpy.mockRestore();
@@ -165,7 +169,7 @@ describe('makeUserNotifier', () => {
   };
 
   beforeEach(() => {
-    jest.mocked(dialog.showMessageBox).mockReset();
+    vi.mocked(dialog.showMessageBox).mockReset();
   });
 
   it('is a function that returns a callback function', () => {
@@ -177,19 +181,23 @@ describe('makeUserNotifier', () => {
     it.each([
       ['does', 0, 1],
       ['does not', 1, 0],
-    ])('%s call autoUpdater.quitAndInstall if the user responds with %i', (_, response, called) => {
-      jest
-        .mocked(dialog.showMessageBox)
-        .mockResolvedValueOnce({ response, checkboxChecked: false });
-      const notifier = makeUserNotifier();
-      notifier(fakeUpdateInfo);
+    ])(
+      '%s call autoUpdater.quitAndInstall if the user responds with %i',
+      async (_, response, called) => {
+        vi.mocked(autoUpdater.quitAndInstall).mockClear();
+        vi.mocked(dialog.showMessageBox).mockResolvedValueOnce({
+          response,
+          checkboxChecked: false,
+        });
+        const notifier = makeUserNotifier();
+        notifier(fakeUpdateInfo);
 
-      expect(dialog.showMessageBox).toHaveBeenCalled();
-      // quitAndInstall is only called after the showMessageBox promise resolves
-      process.nextTick(() => {
+        expect(dialog.showMessageBox).toHaveBeenCalled();
+        // quitAndInstall is only called after the showMessageBox promise resolves
+        await new Promise((resolve) => process.nextTick(resolve));
         expect(autoUpdater.quitAndInstall).toHaveBeenCalledTimes(called);
-      });
-    });
+      },
+    );
   });
 
   it('can customize dialog properties', () => {
@@ -200,7 +208,7 @@ describe('makeUserNotifier', () => {
       laterButtonText: 'Maybe not',
     };
 
-    jest.mocked(dialog.showMessageBox).mockResolvedValue({ response: 0, checkboxChecked: false });
+    vi.mocked(dialog.showMessageBox).mockResolvedValue({ response: 0, checkboxChecked: false });
     const notifier = makeUserNotifier(strings);
     notifier(fakeUpdateInfo);
     expect(dialog.showMessageBox).toHaveBeenCalledWith(
